@@ -1,0 +1,45 @@
+{
+  "@@locale": "en",
+  "appTitle": "Hotels App",
+  "authTitle": "Sign in",
+  "authNameLabel": "Name",
+  "authEmailLabel": "Email",
+  "authContinue": "Continue",
+  "errorInvalidAuth": "Please enter a valid name and email",
+  "hotelsTitle": "Hotels",
+  "hotelsEmpty": "No hotels",
+  "roomsTitle": "Rooms • {hotelName}",
+  "roomsEmpty": "No rooms",
+  "roomDetailsTitle": "Room",
+  "statusAvailable": "Room is available",
+  "statusUnavailable": "Room is not available",
+  "conflictingBookingsTitle": "Unavailable booking dates:",
+  "bookingActive": "Active",
+  "bookingCancelled": "Cancelled",
+  "buttonCheck": "Check",
+  "buttonBook": "Book",
+  "buttonCancel": "Cancel",
+  "bookingsTitle": "Room bookings",
+  "windowsOverviewTitle": "Hotels (Windows Widget)",
+  "windowsOverviewEmpty": "No hotel data",
+  "buttonRefresh": "Refresh",
+  "filtersMinPrice": "Min price",
+  "filtersMaxPrice": "Max price",
+  "filtersRoomType": "Room type",
+  "filtersAnyType": "Any",
+  "filtersDates": "Select booking dates",
+  "filtersApply": "Apply",
+  "errorLoading": "Loading error",
+  "statusFreeToday": "Available today",
+  "statusBusyToday": "Busy today",
+  "statusNextBookingTomorrow": "Next booking: tomorrow",
+  "statusNextBookingDays": "Next booking: in {days} days",
+  "@statusNextBookingDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
+}
+

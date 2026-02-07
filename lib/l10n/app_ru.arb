@@ -1,0 +1,45 @@
+{
+  "@@locale": "ru",
+  "appTitle": "Приложение отелей",
+  "authTitle": "Вход",
+  "authNameLabel": "Имя",
+  "authEmailLabel": "Email",
+  "authContinue": "Продолжить",
+  "errorInvalidAuth": "Введите корректные имя и email",
+  "hotelsTitle": "Отели",
+  "hotelsEmpty": "Нет отелей",
+  "roomsTitle": "Номера • {hotelName}",
+  "roomsEmpty": "Нет номеров",
+  "roomDetailsTitle": "Номер",
+  "statusAvailable": "Номер доступен",
+  "statusUnavailable": "Номер занят",
+  "conflictingBookingsTitle": "Недоступные даты брони:",
+  "bookingActive": "Активна",
+  "bookingCancelled": "Отменена",
+  "buttonCheck": "Проверить",
+  "buttonBook": "Забронировать",
+  "buttonCancel": "Отменить",
+  "bookingsTitle": "Брони номера",
+  "windowsOverviewTitle": "Отели (Windows Widget)",
+  "windowsOverviewEmpty": "Нет данных по отелям",
+  "buttonRefresh": "Обновить",
+  "filtersMinPrice": "Мин. цена",
+  "filtersMaxPrice": "Макс. цена",
+  "filtersRoomType": "Тип номера",
+  "filtersAnyType": "Любой",
+  "filtersDates": "Выбрать даты брони",
+  "filtersApply": "Применить",
+  "errorLoading": "Ошибка загрузки",
+  "statusFreeToday": "Свободно сегодня",
+  "statusBusyToday": "Занято сегодня",
+  "statusNextBookingTomorrow": "Ближайшая бронь: завтра",
+  "statusNextBookingDays": "Ближайшая бронь: через {days} дн.",
+  "@statusNextBookingDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  }
+}
+
