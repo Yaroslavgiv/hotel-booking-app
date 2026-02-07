@@ -38,14 +38,19 @@ class RoomDetailsPage extends StatelessWidget {
           cancelBooking,
         );
 
-        final AuthState authState = ctx.read<AuthBloc>().state;
-        if (authState is AuthAuthenticated) {
-          bloc.add(
-            GuestInfoChanged(
-              name: authState.user.name,
-              email: authState.user.email,
-            ),
-          );
+        try {
+          final AuthState authState = ctx.read<AuthBloc>().state;
+          if (authState is AuthAuthenticated) {
+            bloc.add(
+              GuestInfoChanged(
+                name: authState.user.name,
+                email: authState.user.email,
+              ),
+            );
+          }
+        } catch (e) {
+          // AuthBloc может быть недоступен, это нормально
+          // Пользователь сможет ввести данные вручную
         }
 
         bloc.add(LoadRoomDetailsRequested(roomId));
@@ -77,6 +82,7 @@ class RoomDetailsPage extends StatelessWidget {
             }
 
             final Color primary = Theme.of(context).colorScheme.primary;
+            final String currentRoomId = state.room?.id ?? roomId;
 
             return SafeArea(
               child: LayoutBuilder(
@@ -88,7 +94,7 @@ class RoomDetailsPage extends StatelessWidget {
                     ),
                     child: Column(
                       children: <Widget>[
-                  _RoomHero(state: state, primary: primary),
+                  _RoomHero(state: state, primary: primary, roomId: currentRoomId),
                   Expanded(
                     child: Container(
                       width: double.infinity,
@@ -418,10 +424,12 @@ class _RoomHero extends StatelessWidget {
   const _RoomHero({
     required this.state,
     required this.primary,
+    required this.roomId,
   });
 
   final RoomDetailsState state;
   final Color primary;
+  final String roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -526,6 +534,18 @@ class _RoomHero extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
+          Positioned(
+            right: 8,
+            top: 8,
+            child: IconButton(
+              icon: const Icon(Icons.refresh, color: Colors.white),
+              onPressed: () {
+                context.read<RoomDetailsBloc>().add(
+                      LoadRoomDetailsRequested(roomId),
+                    );
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -559,10 +579,13 @@ class _DateRangePicker extends StatelessWidget {
           child: OutlinedButton(
             onPressed: () async {
               final DateTime now = DateTime.now();
+              // Начало сегодняшнего дня - минимальная дата для выбора
+              final DateTime todayStart = DateTime(now.year, now.month, now.day);
               final DateTimeRange? picked = await showDateRangePicker(
                 context: context,
-                firstDate: DateTime(now.year - 1),
+                firstDate: todayStart,
                 lastDate: DateTime(now.year + 2),
+                initialDateRange: null,
               );
               if (picked != null) {
                 context.read<RoomDetailsBloc>().add(

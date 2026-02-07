@@ -176,7 +176,10 @@ mutation CancelBooking($id: ID!) {
 
   Future<List<Hotel>> fetchHotels() async {
     final QueryResult result = await client.query(
-      QueryOptions(document: gql(_getHotelsQuery)),
+      QueryOptions(
+        document: gql(_getHotelsQuery),
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
     );
 
     if (result.hasException) {
@@ -195,6 +198,7 @@ mutation CancelBooking($id: ID!) {
     final QueryResult result = await client.query(
       QueryOptions(
         document: gql(_getRoomsByHotelQuery),
+        fetchPolicy: FetchPolicy.networkOnly,
         variables: <String, dynamic>{'hotelId': hotelId},
       ),
     );
@@ -213,7 +217,10 @@ mutation CancelBooking($id: ID!) {
 
   Future<Room> fetchRoomById(String roomId) async {
     final QueryResult result = await client.query(
-      QueryOptions(document: gql(_getRoomsQuery)),
+      QueryOptions(
+        document: gql(_getRoomsQuery),
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
     );
 
     if (result.hasException) {
@@ -249,6 +256,7 @@ mutation CancelBooking($id: ID!) {
     final QueryResult result = await client.query(
       QueryOptions(
         document: gql(_checkAvailabilityQuery),
+        fetchPolicy: FetchPolicy.networkOnly,
         variables: <String, dynamic>{
           'roomId': roomId,
           'checkIn': start.toIso8601String().split('T').first,
@@ -304,6 +312,9 @@ mutation CancelBooking($id: ID!) {
       throw result.exception!;
     }
 
+    // С fetchPolicy: FetchPolicy.networkOnly кэш не используется,
+    // поэтому данные всегда будут свежими
+
     final Map<String, dynamic> bookingJson =
         result.data?['createBooking'] as Map<String, dynamic>;
 
@@ -321,5 +332,8 @@ mutation CancelBooking($id: ID!) {
     if (result.hasException) {
       throw result.exception!;
     }
+
+    // С fetchPolicy: FetchPolicy.networkOnly кэш не используется,
+    // поэтому данные всегда будут свежими
   }
 }

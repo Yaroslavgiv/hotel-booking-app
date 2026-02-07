@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobapp/l10n/app_localizations.dart';
+import 'package:mobapp/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
 import 'package:mobapp/features/hotels/data/datasources/hotel_remote_data_source.dart';
 import 'package:mobapp/features/hotels/data/repositories/hotel_repository_impl.dart';
@@ -68,10 +69,13 @@ class RoomsPage extends StatelessWidget {
                           hotel: hotel,
                           primary: primary,
                           onTap: () {
+                            final authBloc = context.read<AuthBloc>();
                             Navigator.of(context).push(
                               MaterialPageRoute<Widget>(
-                                builder: (_) =>
-                                    RoomDetailsPage(roomId: room.id),
+                                builder: (_) => BlocProvider<AuthBloc>.value(
+                                  value: authBloc,
+                                  child: RoomDetailsPage(roomId: room.id),
+                                ),
                               ),
                             );
                           },
