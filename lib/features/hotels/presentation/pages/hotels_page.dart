@@ -155,8 +155,9 @@ class _HotelsHeader extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       AppLocalizations.of(context)!.appTitle,
-                      style: Theme.of(context).textTheme.labelSmall
-                          ?.copyWith(color: onPrimary.withOpacity(0.8)),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: onPrimary.withOpacity(0.8),
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(

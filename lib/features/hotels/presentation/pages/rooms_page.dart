@@ -144,8 +144,9 @@ class _RoomsHeader extends StatelessWidget {
                   children: <Widget>[
                     Text(
                       'Отель',
-                      style: Theme.of(context).textTheme.labelSmall
-                          ?.copyWith(color: Colors.white.withOpacity(0.8)),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: Colors.white.withOpacity(0.8),
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
