@@ -21,14 +21,14 @@ class RoomDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final GetRoomDetailsUseCase getRoomDetails =
-        context.read<GetRoomDetailsUseCase>();
-    final CheckAvailabilityUseCase checkAvailability =
-        context.read<CheckAvailabilityUseCase>();
-    final CreateBookingUseCase createBooking =
-        context.read<CreateBookingUseCase>();
-    final CancelBookingUseCase cancelBooking =
-        context.read<CancelBookingUseCase>();
+    final GetRoomDetailsUseCase getRoomDetails = context
+        .read<GetRoomDetailsUseCase>();
+    final CheckAvailabilityUseCase checkAvailability = context
+        .read<CheckAvailabilityUseCase>();
+    final CreateBookingUseCase createBooking = context
+        .read<CreateBookingUseCase>();
+    final CancelBookingUseCase cancelBooking = context
+        .read<CancelBookingUseCase>();
 
     return BlocProvider<RoomDetailsBloc>(
       create: (BuildContext ctx) {

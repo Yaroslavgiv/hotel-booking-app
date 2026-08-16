@@ -23,9 +23,8 @@ class AppDependencies extends StatelessWidget {
           create: (_) => HotelRemoteDataSource(),
         ),
         RepositoryProvider<HotelRepository>(
-          create: (BuildContext context) => HotelRepositoryImpl(
-            context.read<HotelRemoteDataSource>(),
-          ),
+          create: (BuildContext context) =>
+              HotelRepositoryImpl(context.read<HotelRemoteDataSource>()),
         ),
         RepositoryProvider<GetHotelsUseCase>(
           create: (BuildContext context) =>

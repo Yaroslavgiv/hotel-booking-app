@@ -52,11 +52,14 @@ void main() {
       expect(failure, isA<DataMappingFailure>());
     });
 
-    test('maps an unknown exception without leaking implementation details', () {
-      final Failure failure = mapper.map(StateError('internal detail'));
+    test(
+      'maps an unknown exception without leaking implementation details',
+      () {
+        final Failure failure = mapper.map(StateError('internal detail'));
 
-      expect(failure, isA<UnknownFailure>());
-      expect(failure.message, isNot(contains('internal detail')));
-    });
+        expect(failure, isA<UnknownFailure>());
+        expect(failure.message, isNot(contains('internal detail')));
+      },
+    );
   });
 }

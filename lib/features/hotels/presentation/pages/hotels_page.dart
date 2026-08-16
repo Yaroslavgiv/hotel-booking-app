@@ -17,10 +17,10 @@ class HotelsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
-    final GetRoomsByHotelUseCase getRoomsByHotel =
-        context.read<GetRoomsByHotelUseCase>();
-    final CheckAvailabilityUseCase checkAvailability =
-        context.read<CheckAvailabilityUseCase>();
+    final GetRoomsByHotelUseCase getRoomsByHotel = context
+        .read<GetRoomsByHotelUseCase>();
+    final CheckAvailabilityUseCase checkAvailability = context
+        .read<CheckAvailabilityUseCase>();
 
     final Color primary = Theme.of(context).colorScheme.primary;
     final Color onPrimary = Theme.of(context).colorScheme.onPrimary;

@@ -6,8 +6,7 @@ import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_reposi
 import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockHotelRemoteDataSource extends Mock
-    implements HotelRemoteDataSource {}
+class MockHotelRemoteDataSource extends Mock implements HotelRemoteDataSource {}
 
 void main() {
   late MockHotelRemoteDataSource remote;
@@ -31,37 +30,37 @@ void main() {
       verify(() => remote.fetchHotels()).called(1);
     });
 
-    test('translates GraphQL errors before they leave the repository', () async {
-      when(() => remote.fetchHotels()).thenThrow(
-        OperationException(
-          graphqlErrors: <GraphQLError>[
-            const GraphQLError(
-              message: 'Параметры запроса некорректны',
-              extensions: <String, dynamic>{'code': 'BAD_USER_INPUT'},
-            ),
-          ],
-        ),
-      );
-
-      await expectLater(
-        repository.getHotels(),
-        throwsA(
-          isA<ValidationFailure>().having(
-            (ValidationFailure failure) => failure.message,
-            'message',
-            'Параметры запроса некорректны',
+    test(
+      'translates GraphQL errors before they leave the repository',
+      () async {
+        when(() => remote.fetchHotels()).thenThrow(
+          OperationException(
+            graphqlErrors: <GraphQLError>[
+              const GraphQLError(
+                message: 'Параметры запроса некорректны',
+                extensions: <String, dynamic>{'code': 'BAD_USER_INPUT'},
+              ),
+            ],
           ),
-        ),
-      );
-    });
+        );
+
+        await expectLater(
+          repository.getHotels(),
+          throwsA(
+            isA<ValidationFailure>().having(
+              (ValidationFailure failure) => failure.message,
+              'message',
+              'Параметры запроса некорректны',
+            ),
+          ),
+        );
+      },
+    );
 
     test('does not leak unexpected infrastructure errors', () async {
       when(() => remote.fetchHotels()).thenThrow(StateError('database host'));
 
-      await expectLater(
-        repository.getHotels(),
-        throwsA(isA<UnknownFailure>()),
-      );
+      await expectLater(repository.getHotels(), throwsA(isA<UnknownFailure>()));
     });
   });
 }

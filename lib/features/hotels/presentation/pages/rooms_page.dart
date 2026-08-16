@@ -18,8 +18,8 @@ class RoomsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final GetRoomsByHotelUseCase getRoomsByHotel =
-        context.read<GetRoomsByHotelUseCase>();
+    final GetRoomsByHotelUseCase getRoomsByHotel = context
+        .read<GetRoomsByHotelUseCase>();
 
     final Color primary = Theme.of(context).colorScheme.primary;
 

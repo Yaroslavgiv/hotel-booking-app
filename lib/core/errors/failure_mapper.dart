@@ -34,13 +34,14 @@ class FailureMapper {
     final GraphQLError? graphQLError = error.graphqlErrors.isEmpty
         ? null
         : error.graphqlErrors.first;
-    final String message = graphQLError?.message ??
+    final String message =
+        graphQLError?.message ??
         'Сервер не смог обработать запрос. Попробуйте ещё раз.';
     final String? code = graphQLError?.extensions?['code']?.toString();
 
     return switch (code) {
-      'BAD_USER_INPUT' || 'VALIDATION_ERROR' =>
-        ValidationFailure(message, cause: error),
+      'BAD_USER_INPUT' ||
+      'VALIDATION_ERROR' => ValidationFailure(message, cause: error),
       'NOT_FOUND' => NotFoundFailure(message, cause: error),
       _ => ServerFailure(message, cause: error),
     };

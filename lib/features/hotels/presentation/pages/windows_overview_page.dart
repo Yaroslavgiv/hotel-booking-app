@@ -16,10 +16,10 @@ class WindowsOverviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
-    final GetRoomsByHotelUseCase getRoomsByHotel =
-        context.read<GetRoomsByHotelUseCase>();
-    final CheckAvailabilityUseCase checkAvailability =
-        context.read<CheckAvailabilityUseCase>();
+    final GetRoomsByHotelUseCase getRoomsByHotel = context
+        .read<GetRoomsByHotelUseCase>();
+    final CheckAvailabilityUseCase checkAvailability = context
+        .read<CheckAvailabilityUseCase>();
 
     return BlocProvider<WindowsOverviewBloc>(
       create: (_) =>
