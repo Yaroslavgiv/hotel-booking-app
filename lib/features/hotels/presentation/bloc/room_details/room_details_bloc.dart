@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:mobapp/features/hotels/application/cancel_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/create_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_room_details_use_case.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_room_details_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 
 import 'room_details_event.dart';
 import 'room_details_state.dart';

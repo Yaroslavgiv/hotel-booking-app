@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_state.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
-import 'package:mobapp/features/hotels/application/cancel_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/create_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_room_details_use_case.dart';
-import 'package:mobapp/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:mobapp/features/hotels/data/repositories/hotel_repository_impl.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/room_details/room_details_bloc.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/room_details/room_details_event.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/room_details/room_details_state.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_room_details_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
+import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_state.dart';
 
 class RoomDetailsPage extends StatelessWidget {
   const RoomDetailsPage({required this.roomId, super.key});

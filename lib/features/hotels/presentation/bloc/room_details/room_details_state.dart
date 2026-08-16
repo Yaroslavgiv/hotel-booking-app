@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
 
 enum RoomDetailsStatus { initial, loading, success, failure }
 

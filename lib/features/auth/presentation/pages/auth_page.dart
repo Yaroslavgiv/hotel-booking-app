@@ -1,11 +1,11 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_event.dart';
-import 'package:mobapp/features/hotels/presentation/pages/hotels_page.dart';
-import 'package:mobapp/features/hotels/presentation/pages/windows_overview_page.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/pages/hotels_page.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/pages/windows_overview_page.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});

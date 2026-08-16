@@ -1,8 +1,8 @@
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 
-import 'package:mobapp/features/hotels/domain/value_objects/availability_info.dart';
+import 'package:hotel_booking_app/features/hotels/domain/value_objects/availability_info.dart';
 
 abstract class HotelRepository {
   Future<List<Hotel>> getHotels();

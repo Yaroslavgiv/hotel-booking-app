@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/auth/domain/entities/user.dart';
+import 'package:hotel_booking_app/features/auth/domain/entities/user.dart';
 
 import 'auth_event.dart';
 import 'auth_state.dart';

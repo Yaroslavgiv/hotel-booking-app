@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
-import 'package:mobapp/features/auth/presentation/pages/auth_page.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/auth/presentation/pages/auth_page.dart';
 
 void main() {
   runApp(const MyApp());

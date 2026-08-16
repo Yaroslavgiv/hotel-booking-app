@@ -1,5 +1,5 @@
-import 'package:mobapp/features/hotels/domain/repositories/hotel_repository.dart';
-import 'package:mobapp/features/hotels/domain/value_objects/availability_info.dart';
+import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repository.dart';
+import 'package:hotel_booking_app/features/hotels/domain/value_objects/availability_info.dart';
 
 class CheckAvailabilityParams {
   const CheckAvailabilityParams({

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_hotels_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:mobapp/features/hotels/data/repositories/hotel_repository_impl.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/hotels/hotels_bloc.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/hotels/hotels_event.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/hotels/hotels_state.dart';
-import 'package:mobapp/features/hotels/presentation/pages/rooms_page.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
+import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_state.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/pages/rooms_page.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
 
 class HotelsPage extends StatelessWidget {
   const HotelsPage({super.key});

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_hotels_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:mobapp/features/hotels/data/repositories/hotel_repository_impl.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/windows_overview/windows_overview_bloc.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/windows_overview/windows_overview_event.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/windows_overview/windows_overview_state.dart';
-import 'package:mobapp/features/hotels/presentation/pages/rooms_page.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
+import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/windows_overview/windows_overview_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/windows_overview/windows_overview_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/windows_overview/windows_overview_state.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/pages/rooms_page.dart';
 
 class WindowsOverviewPage extends StatelessWidget {
   const WindowsOverviewPage({super.key});

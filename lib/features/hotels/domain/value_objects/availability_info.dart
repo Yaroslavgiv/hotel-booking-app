@@ -1,4 +1,4 @@
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 
 class AvailabilityInfo {
   const AvailabilityInfo({
