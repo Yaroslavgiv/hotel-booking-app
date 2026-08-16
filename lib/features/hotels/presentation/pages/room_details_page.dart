@@ -22,7 +22,7 @@ class RoomDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final repository = HotelRepositoryImpl(HotelRemoteDataSource());
     final getRoomDetails = GetRoomDetailsUseCase(repository);
     final checkAvailability = CheckAvailabilityUseCase(repository);
@@ -525,7 +525,7 @@ class _RoomHero extends StatelessWidget {
 
     final room = state.room!;
 
-    return Container(
+    return SizedBox(
       height: 220,
       width: double.infinity,
       child: Stack(
@@ -545,7 +545,10 @@ class _RoomHero extends StatelessWidget {
                     return Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: <Color>[primary, primary.withOpacity(0.8)],
+                          colors: <Color>[
+                            primary,
+                            primary.withValues(alpha: 0.8),
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -562,7 +565,7 @@ class _RoomHero extends StatelessWidget {
                 end: Alignment.bottomCenter,
                 colors: <Color>[
                   Colors.transparent,
-                  Colors.black.withOpacity(0.7),
+                  Colors.black.withValues(alpha: 0.7),
                 ],
               ),
               borderRadius: const BorderRadius.only(
@@ -599,7 +602,7 @@ class _RoomHero extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.18),
+                    color: Colors.white.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
@@ -678,13 +681,16 @@ class _DateRangePicker extends StatelessWidget {
                 lastDate: DateTime(now.year + 2),
                 initialDateRange: null,
               );
+              if (!context.mounted) {
+                return;
+              }
               if (picked != null) {
                 context.read<RoomDetailsBloc>().add(
                   DateRangeChanged(picked.start, picked.end),
                 );
               }
             },
-            child: Text(AppLocalizations.of(context)!.filtersDates),
+            child: Text(AppLocalizations.of(context).filtersDates),
           ),
         ),
       ],

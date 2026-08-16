@@ -17,7 +17,7 @@ class HotelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final repository = HotelRepositoryImpl(HotelRemoteDataSource());
     final GetHotelsUseCase getHotels = GetHotelsUseCase(repository);
     final GetRoomsByHotelUseCase getRoomsByHotel = GetRoomsByHotelUseCase(
@@ -134,7 +134,7 @@ class _HotelsHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[primary, primary.withOpacity(0.8)],
+          colors: <Color>[primary, primary.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -154,9 +154,9 @@ class _HotelsHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      AppLocalizations.of(context)!.appTitle,
+                      AppLocalizations.of(context).appTitle,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: onPrimary.withOpacity(0.8),
+                        color: onPrimary.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -172,7 +172,7 @@ class _HotelsHeader extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               CircleAvatar(
-                backgroundColor: onPrimary.withOpacity(0.15),
+                backgroundColor: onPrimary.withValues(alpha: 0.15),
                 child: Icon(Icons.location_on_outlined, color: onPrimary),
               ),
             ],
@@ -180,13 +180,13 @@ class _HotelsHeader extends StatelessWidget {
           const SizedBox(height: 20),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               children: <Widget>[
-                Icon(Icons.search, color: onPrimary.withOpacity(0.9)),
+                Icon(Icons.search, color: onPrimary.withValues(alpha: 0.9)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
@@ -194,7 +194,9 @@ class _HotelsHeader extends StatelessWidget {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Поиск отеля, города...',
-                      hintStyle: TextStyle(color: onPrimary.withOpacity(0.7)),
+                      hintStyle: TextStyle(
+                        color: onPrimary.withValues(alpha: 0.7),
+                      ),
                     ),
                   ),
                 ),
@@ -259,7 +261,7 @@ class _HotelCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
@@ -272,7 +274,7 @@ class _HotelCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(20),
                 ),
-                child: Container(
+                child: SizedBox(
                   height: 160,
                   child: Stack(
                     fit: StackFit.expand,
@@ -291,8 +293,8 @@ class _HotelCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: <Color>[
-                                      primary.withOpacity(0.95),
-                                      primary.withOpacity(0.75),
+                                      primary.withValues(alpha: 0.95),
+                                      primary.withValues(alpha: 0.75),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -309,7 +311,7 @@ class _HotelCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: <Color>[
                               Colors.transparent,
-                              Colors.black.withOpacity(0.6),
+                              Colors.black.withValues(alpha: 0.6),
                             ],
                           ),
                         ),
@@ -367,7 +369,7 @@ class _HotelCard extends StatelessWidget {
                       child: availabilityStatus != null
                           ? _buildAvailabilityStatus(
                               context,
-                              availabilityStatus!,
+                              availabilityStatus,
                             )
                           : _buildLoadingStatus(context),
                     ),
@@ -382,7 +384,7 @@ class _HotelCard extends StatelessWidget {
                           minHeight: 36,
                         ),
                         onPressed: onRefreshStatus,
-                        tooltip: AppLocalizations.of(context)!.buttonRefresh,
+                        tooltip: AppLocalizations.of(context).buttonRefresh,
                       ),
                     ],
                   ],
@@ -398,7 +400,7 @@ class _HotelCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: primary.withOpacity(0.08),
+                        color: primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -433,7 +435,7 @@ class _HotelCard extends StatelessWidget {
     BuildContext context,
     HotelAvailabilityStatus status,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final bool free = status.hasFreeRoomToday;
 
     String statusText;

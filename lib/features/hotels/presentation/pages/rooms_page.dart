@@ -19,7 +19,7 @@ class RoomsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final repository = HotelRepositoryImpl(HotelRemoteDataSource());
     final getRoomsByHotel = GetRoomsByHotelUseCase(repository);
 
@@ -113,7 +113,7 @@ class _RoomsHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[primary, primary.withOpacity(0.85)],
+          colors: <Color>[primary, primary.withValues(alpha: 0.85)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -145,7 +145,7 @@ class _RoomsHeader extends StatelessWidget {
                     Text(
                       'Отель',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: Colors.white.withOpacity(0.8),
+                        color: Colors.white.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -186,7 +186,7 @@ class _RoomsHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.18),
+                  color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Icon(Icons.king_bed_rounded, color: Colors.white),
@@ -249,7 +249,7 @@ class _RoomCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -262,7 +262,7 @@ class _RoomCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(18),
                 ),
-                child: Container(
+                child: SizedBox(
                   height: 130,
                   child: Stack(
                     fit: StackFit.expand,
@@ -281,8 +281,8 @@ class _RoomCard extends StatelessWidget {
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: <Color>[
-                                      primary.withOpacity(0.95),
-                                      primary.withOpacity(0.7),
+                                      primary.withValues(alpha: 0.95),
+                                      primary.withValues(alpha: 0.7),
                                     ],
                                     begin: Alignment.topLeft,
                                     end: Alignment.bottomRight,
@@ -299,7 +299,7 @@ class _RoomCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: <Color>[
                               Colors.transparent,
-                              Colors.black.withOpacity(0.6),
+                              Colors.black.withValues(alpha: 0.6),
                             ],
                           ),
                         ),
@@ -425,6 +425,9 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 2),
     );
+    if (!context.mounted) {
+      return;
+    }
     if (picked != null) {
       context.read<RoomsBloc>().add(
         RoomsFilterUpdated(
@@ -440,7 +443,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return BlocBuilder<RoomsBloc, RoomsState>(
       builder: (BuildContext context, RoomsState state) {
         final List<String> types = state.allRooms
@@ -494,7 +497,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
                               vertical: 12,
                             ),
                           ),
-                          value: _selectedType,
+                          initialValue: _selectedType,
                           items: <DropdownMenuItem<String>>[
                             DropdownMenuItem<String>(
                               value: null,
@@ -557,7 +560,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
                               vertical: 12,
                             ),
                           ),
-                          value: _selectedType,
+                          initialValue: _selectedType,
                           items: <DropdownMenuItem<String>>[
                             DropdownMenuItem<String>(
                               value: null,

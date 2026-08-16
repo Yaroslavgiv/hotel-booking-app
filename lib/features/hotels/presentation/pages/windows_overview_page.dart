@@ -16,7 +16,7 @@ class WindowsOverviewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final repository = HotelRepositoryImpl(HotelRemoteDataSource());
     final getHotels = GetHotelsUseCase(repository);
     final getRoomsByHotel = GetRoomsByHotelUseCase(repository);
@@ -131,7 +131,7 @@ class WindowsOverviewPage extends StatelessWidget {
                                   // Изображение отеля
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
-                                    child: Container(
+                                    child: SizedBox(
                                       width: 80,
                                       height: 80,
                                       child: Image.asset(
@@ -146,10 +146,13 @@ class WindowsOverviewPage extends StatelessWidget {
                                               return Container(
                                                 decoration: BoxDecoration(
                                                   color: free
-                                                      ? Colors.green
-                                                            .withOpacity(0.1)
+                                                      ? Colors.green.withValues(
+                                                          alpha: 0.1,
+                                                        )
                                                       : Colors.orange
-                                                            .withOpacity(0.1),
+                                                            .withValues(
+                                                              alpha: 0.1,
+                                                            ),
                                                 ),
                                                 child: Icon(
                                                   free

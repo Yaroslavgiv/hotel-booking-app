@@ -38,7 +38,7 @@ class _AuthPageState extends State<AuthPage> {
 
     if (name.isEmpty || email.isEmpty || !_isValidEmail(email)) {
       setState(() {
-        _error = AppLocalizations.of(context)!.errorInvalidAuth;
+        _error = AppLocalizations.of(context).errorInvalidAuth;
       });
       return;
     }
@@ -59,7 +59,7 @@ class _AuthPageState extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final Color primary = Theme.of(context).colorScheme.primary;
     final Color onPrimary = Theme.of(context).colorScheme.onPrimary;
 
@@ -73,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: <Color>[primary, primary.withOpacity(0.8)],
+                  colors: <Color>[primary, primary.withValues(alpha: 0.8)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -95,7 +95,9 @@ class _AuthPageState extends State<AuthPage> {
                             Text(
                               l10n.appTitle,
                               style: Theme.of(context).textTheme.labelSmall
-                                  ?.copyWith(color: onPrimary.withOpacity(0.8)),
+                                  ?.copyWith(
+                                    color: onPrimary.withValues(alpha: 0.8),
+                                  ),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -111,7 +113,7 @@ class _AuthPageState extends State<AuthPage> {
                       ),
                       const SizedBox(width: 12),
                       CircleAvatar(
-                        backgroundColor: onPrimary.withOpacity(0.15),
+                        backgroundColor: onPrimary.withValues(alpha: 0.15),
                         child: Icon(Icons.person_outline, color: onPrimary),
                       ),
                     ],
@@ -132,7 +134,7 @@ class _AuthPageState extends State<AuthPage> {
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: <BoxShadow>[
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.04),
+                          color: Colors.black.withValues(alpha: 0.04),
                           blurRadius: 12,
                           offset: const Offset(0, 6),
                         ),

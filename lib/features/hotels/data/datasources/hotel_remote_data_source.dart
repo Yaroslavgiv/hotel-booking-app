@@ -132,7 +132,7 @@ mutation CancelBooking($id: ID!) {
   }
 
   Booking _mapBooking(Map<String, dynamic> json) {
-    DateTime _parseDate(dynamic value) {
+    DateTime parseDate(dynamic value) {
       // Бэкенд может вернуть:
       // - ISO-строку даты,
       // - timestamp в миллисекундах (как число или строка).
@@ -162,8 +162,8 @@ mutation CancelBooking($id: ID!) {
     return Booking(
       id: json['id'] as String,
       roomId: json['roomId'] as String,
-      startDate: _parseDate(checkInRaw),
-      endDate: _parseDate(checkOutRaw),
+      startDate: parseDate(checkInRaw),
+      endDate: parseDate(checkOutRaw),
       isActive: json['isActive'] as bool,
       guestName: json['guestName'] as String?,
       guestEmail: json['guestEmail'] as String?,
@@ -230,13 +230,9 @@ mutation CancelBooking($id: ID!) {
     final List<dynamic> roomsJson =
         (result.data?['rooms'] as List<dynamic>? ?? <dynamic>[]);
 
-    final Map<String, dynamic>? roomJson = roomsJson
+    final Map<String, dynamic> roomJson = roomsJson
         .cast<Map<String, dynamic>>()
         .firstWhere((Map<String, dynamic> r) => r['id'] == roomId);
-
-    if (roomJson == null) {
-      throw Exception('Room not found');
-    }
 
     return _mapRoom(roomJson);
   }
