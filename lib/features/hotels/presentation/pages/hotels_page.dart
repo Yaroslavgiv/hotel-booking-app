@@ -369,7 +369,7 @@ class _HotelCard extends StatelessWidget {
                       child: availabilityStatus != null
                           ? _buildAvailabilityStatus(
                               context,
-                              availabilityStatus,
+                              availabilityStatus!,
                             )
                           : _buildLoadingStatus(context),
                     ),
