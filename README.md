@@ -1,770 +1,174 @@
-# MobApp – Система бронирования отелей
+# Hotel Booking App
 
-Мобильное и desktop‑приложение для бронирования номеров в отелях с полным функционалом управления бронированиями, проверки доступности и фильтрации.
+Cross-platform hotel booking client built with **Flutter**, **BLoC**, **GraphQL**, and **Clean Architecture**. The application is part of a full-stack booking platform with a dedicated GraphQL backend and React web client.
 
-**Клиент:** Flutter (Android/iOS/Windows)  
-**Backend:** Node.js + Apollo GraphQL
+[![Flutter CI](https://github.com/Yaroslavgiv/hotel-booking-app/actions/workflows/flutter-ci.yml/badge.svg)](https://github.com/Yaroslavgiv/hotel-booking-app/actions/workflows/flutter-ci.yml)
 
----
+## Product scope
 
-## 📋 Содержание
+- Android, iOS, and Windows clients
+- Hotel and room discovery
+- Availability checks for selected date ranges
+- Room filtering by price and type
+- Booking creation and cancellation
+- User-aware booking flow
+- Localization support
+- GraphQL integration through a dedicated data source
+- BLoC-based state management
 
-- [Основные возможности](#-основные-возможности)
-- [Архитектура проекта](#-архитектура-проекта)
-- [Функциональность](#-функциональность)
-- [Технологии](#-технологии)
-- [Структура проекта](#-структура-проекта)
-- [Установка и запуск](#-установка-и-запуск)
-- [Тестирование](#-тестирование)
-- [Локализация](#-локализация)
-- [Интеграция с Backend](#-интеграция-с-backend)
-- [Разработка](#-разработка)
+## Architecture
 
----
+The project follows feature-oriented Clean Architecture with explicit boundaries between domain, application, data, and presentation layers.
 
-## ✨ Основные возможности
-
-### 🔐 Авторизация
-- Простая форма входа с валидацией имени и email
-- Сохранение данных пользователя в состоянии приложения
-- Автоматическое заполнение данных гостя при бронировании
-
-### 🏨 Управление отелями
-- Просмотр списка всех отелей
-- Отображение информации об отелях (название, адрес, описание)
-- Проверка доступности номеров в отеле на сегодня
-- Визуальная индикация статуса (свободно/занято)
-
-### 🛏️ Управление номерами
-- Просмотр номеров выбранного отеля
-- Фильтрация номеров по:
-  - Минимальной и максимальной цене
-  - Типу номера
-  - Диапазону дат
-- Отображение детальной информации о каждом номере
-
-### 📅 Бронирование
-- Выбор диапазона дат для бронирования
-- Проверка доступности номера на выбранные даты
-- Отображение конфликтующих бронирований
-- Создание новой брони с данными гостя
-- Просмотр списка своих бронирований
-- Отмена активных бронирований с подтверждением
-
-### 💻 Windows Desktop виджет
-- Быстрый обзор статуса двух отелей
-- Индикация доступности номеров на сегодня
-- Обновление данных по требованию
-- Переход к детальному просмотру отеля
-
----
-
-## 🏗️ Архитектура проекта
-
-Приложение построено на принципах **Clean Architecture** и **SOLID**, что обеспечивает:
-- Разделение ответственности между слоями
-- Независимость бизнес-логики от деталей реализации
-- Легкость тестирования и поддержки
-- Масштабируемость
-
-### Слои архитектуры
-
-#### 1. **Domain Layer** (Бизнес-логика)
-```
-lib/features/
-├── auth/domain/
-│   └── entities/user.dart          # Модель пользователя
-└── hotels/domain/
-    ├── entities/                    # Доменные сущности
-    │   ├── hotel.dart
-    │   ├── room.dart
-    │   └── booking.dart
-    ├── repositories/                # Абстракции репозиториев
-    │   └── hotel_repository.dart
-    └── value_objects/               # Value objects
-        └── availability_info.dart
+```text
+lib/
+├── core/
+├── features/
+│   ├── auth/
+│   │   ├── domain/
+│   │   └── presentation/
+│   └── hotels/
+│       ├── domain/
+│       ├── application/
+│       ├── data/
+│       └── presentation/
+├── l10n/
+└── main.dart
 ```
 
-**Принципы:**
-- Не зависит от внешних библиотек
-- Содержит только бизнес-логику
-- Определяет интерфейсы для работы с данными
+### Dependency flow
 
-#### 2. **Data Layer** (Работа с данными)
-```
-lib/features/hotels/data/
-├── datasources/
-│   └── hotel_remote_data_source.dart    # GraphQL клиент
-└── repositories/
-    └── hotel_repository_impl.dart       # Реализация репозитория
-```
-
-**Функции:**
-- Реализация интерфейсов из domain слоя
-- Работа с GraphQL API
-- Маппинг данных из API в доменные модели
-- Обработка ошибок сети
-
-#### 3. **Application Layer** (Use Cases)
-```
-lib/features/hotels/application/
-├── get_hotels_use_case.dart
-├── get_rooms_by_hotel_use_case.dart
-├── get_room_details_use_case.dart
-├── check_availability_use_case.dart
-├── create_booking_use_case.dart
-└── cancel_booking_use_case.dart
+```text
+Presentation (BLoC / UI)
+          ↓
+     Application
+       Use Cases
+          ↓
+        Domain
+ Entities + Repository contracts
+          ↑
+         Data
+ Repository implementations
+          ↓
+       GraphQL API
 ```
 
-**Назначение:**
-- Инкапсулирует бизнес-операции
-- Изолирует логику от UI
-- Упрощает тестирование
+Key engineering decisions:
 
-#### 4. **Presentation Layer** (UI)
-```
-lib/features/
-├── auth/presentation/
-│   ├── bloc/                         # BLoC для авторизации
-│   └── pages/
-│       └── auth_page.dart
-└── hotels/presentation/
-    ├── bloc/                         # BLoC для управления состоянием
-    │   ├── hotels/
-    │   ├── rooms/
-    │   ├── room_details/
-    │   └── windows_overview/
-    └── pages/                         # Экраны приложения
-        ├── hotels_page.dart
-        ├── rooms_page.dart
-        ├── room_details_page.dart
-        └── windows_overview_page.dart
-```
+- **BLoC** keeps UI state transitions explicit and testable.
+- **Use cases** represent application operations and isolate UI from data-access details.
+- **Repository abstractions** keep the domain layer independent from GraphQL.
+- **Feature-first organization** keeps the codebase scalable as new business capabilities are added.
+- **GraphQL data source** owns transport-level communication and response mapping.
 
-**Паттерны:**
-- **BLoC (Business Logic Component)** для управления состоянием
-- Реактивное программирование через Streams
-- Разделение UI и бизнес-логики
+More details: [Architecture](docs/ARCHITECTURE.md).
 
-### Принципы SOLID
+## Full-stack system
 
-- **SRP (Single Responsibility Principle)**
-  - Каждый BLoC отвечает за одну зону ответственности
-  - Use cases выполняют одну операцию
-  - Классы имеют одну причину для изменения
-
-- **OCP (Open/Closed Principle)**
-  - Расширение функционала через новые use cases
-  - Добавление новых источников данных без изменения domain слоя
-
-- **LSP (Liskov Substitution Principle)**
-  - Реализации репозиториев взаимозаменяемы
-  - Моки в тестах работают как реальные реализации
-
-- **ISP (Interface Segregation Principle)**
-  - Интерфейсы репозиториев разделены по функциональности
-  - Клиенты зависят только от нужных методов
-
-- **DIP (Dependency Inversion Principle)**
-  - Presentation слой зависит от абстракций (репозиторий)
-  - Domain слой не зависит от деталей реализации
-
----
-
-## 🎯 Функциональность
-
-### 1. Авторизация (`AuthPage`)
-
-**Экран входа:**
-- Поля ввода: имя и email
-- Валидация email (регулярное выражение)
-- Отображение ошибок валидации
-- Сохранение данных пользователя в `AuthBloc`
-
-**Навигация:**
-- После успешной авторизации:
-  - **Windows:** переход на `WindowsOverviewPage`
-  - **Android/iOS:** переход на `HotelsPage`
-
-### 2. Список отелей (`HotelsPage`)
-
-**Функции:**
-- Загрузка списка отелей через `HotelsBloc`
-- Отображение карточек отелей с информацией:
-  - Название
-  - Адрес
-  - Описание (если есть)
-- Проверка доступности номеров на сегодня
-- Визуальная индикация:
-  - ✅ Зелёная галочка – есть свободные номера
-  - ❌ Красный крест – все номера заняты
-- Обновление статуса по требованию
-- Переход к списку номеров отеля
-
-**Состояния:**
-- `loading` – загрузка данных
-- `success` – данные загружены
-- `failure` – ошибка загрузки
-
-### 3. Список номеров (`RoomsPage`)
-
-**Функции:**
-- Загрузка номеров выбранного отеля
-- Отображение карточек номеров:
-  - Номер комнаты
-  - Тип номера
-  - Цена за ночь
-- **Фильтрация:**
-  - Минимальная цена (слайдер)
-  - Максимальная цена (слайдер)
-  - Тип номера (выпадающий список)
-  - Диапазон дат (date picker)
-- Применение фильтров в реальном времени
-- Переход к детальной информации о номере
-
-**Фильтры:**
-- Диапазон цен: от минимальной до максимальной
-- Тип номера: все типы или конкретный тип
-- Даты: выбор периода для проверки доступности
-
-### 4. Детали номера (`RoomDetailsPage`)
-
-**Информация о номере:**
-- Hero-секция с изображением/градиентом
-- Номер комнаты
-- Тип номера
-- Цена за ночь
-
-**Данные гостя:**
-- Автоматическое заполнение из `AuthBloc` (если авторизован)
-- Отображение имени и email гостя
-- Возможность редактирования
-
-**Выбор дат:**
-- Кнопка "Выбрать даты брони"
-- Date range picker для выбора периода
-- Отображение выбранного диапазона дат
-
-**Проверка доступности:**
-- Кнопка "Проверить"
-- Запрос к GraphQL API `checkAvailability`
-- Отображение результата:
-  - ✅ "Номер доступен" (зелёным)
-  - ❌ "Номер занят" (красным)
-- Список конфликтующих бронирований (если есть)
-
-**Бронирование:**
-- Кнопка "Забронировать"
-- Валидация данных:
-  - Выбраны даты
-  - Заполнено имя
-  - Email валиден
-  - Номер доступен (не помечен как занят)
-- Создание брони через GraphQL `createBooking`
-- Обновление списка бронирований
-- Очистка выбранных дат после успешного бронирования
-
-**Мои бронирования:**
-- Список бронирований текущего пользователя (по email)
-- Отображение:
-  - Диапазон дат
-  - Имя гостя (если есть)
-- Кнопка "Отменить" для активных бронирований:
-  - Диалог подтверждения
-  - Отмена через GraphQL `cancelBooking`
-  - Обновление статуса брони
-
-**Состояния:**
-- `loading` – загрузка данных
-- `success` – данные загружены
-- `failure` – ошибка с сообщением
-
-### 5. Windows Overview (`WindowsOverviewPage`)
-
-**Назначение:**
-- Быстрый дашборд для администраторов/операторов
-- Обзор статуса отелей на сегодня
-
-**Функции:**
-- Загрузка всех отелей
-- Выбор первых двух отелей
-- Проверка доступности номеров на сегодня
-- Отображение карточек отелей:
-  - Название отеля
-  - Адрес
-  - Статус доступности (иконка)
-- Кнопка "Обновить" для перезагрузки данных
-- Переход к детальному просмотру отеля
-
----
-
-## 🛠️ Технологии
-
-### Frontend (Flutter)
-- **Flutter SDK** ^3.9.2
-- **State Management:** `flutter_bloc` ^9.0.0
-- **GraphQL Client:** `graphql_flutter` ^5.2.0
-- **Локализация:** `flutter_localizations` + `intl` ^0.20.2
-- **UI:** Material Design 3
-
-### Backend
-- **Node.js** + **TypeScript**
-- **Apollo Server** (GraphQL)
-- **TypeORM** + **SQLite**
-- **Express**
-
-### Тестирование
-- **flutter_test** (widget tests)
-- **mocktail** ^1.0.0 (моки для тестов)
-
----
-
-## 📁 Структура проекта
-
-```
-MobApp/
-├── lib/
-│   ├── core/                        # Общая инфраструктура
-│   │   └── config/
-│   │       └── app_config.dart     # Конфигурация GraphQL endpoint
-│   │
-│   ├── features/                    # Функциональные модули
-│   │   ├── auth/                    # Авторизация
-│   │   │   ├── domain/
-│   │   │   │   └── entities/
-│   │   │   │       └── user.dart
-│   │   │   └── presentation/
-│   │   │       ├── bloc/
-│   │   │       │   ├── auth_bloc.dart
-│   │   │       │   ├── auth_event.dart
-│   │   │       │   └── auth_state.dart
-│   │   │       └── pages/
-│   │   │           └── auth_page.dart
-│   │   │
-│   │   └── hotels/                  # Управление отелями
-│   │       ├── application/         # Use Cases
-│   │       │   ├── get_hotels_use_case.dart
-│   │       │   ├── get_rooms_by_hotel_use_case.dart
-│   │       │   ├── get_room_details_use_case.dart
-│   │       │   ├── check_availability_use_case.dart
-│   │       │   ├── create_booking_use_case.dart
-│   │       │   └── cancel_booking_use_case.dart
-│   │       │
-│   │       ├── data/                 # Data Layer
-│   │       │   ├── datasources/
-│   │       │   │   └── hotel_remote_data_source.dart
-│   │       │   └── repositories/
-│   │       │       └── hotel_repository_impl.dart
-│   │       │
-│   │       ├── domain/               # Domain Layer
-│   │       │   ├── entities/
-│   │       │   │   ├── hotel.dart
-│   │       │   │   ├── room.dart
-│   │       │   │   └── booking.dart
-│   │       │   ├── repositories/
-│   │       │   │   └── hotel_repository.dart
-│   │       │   └── value_objects/
-│   │       │       └── availability_info.dart
-│   │       │
-│   │       └── presentation/         # Presentation Layer
-│   │           ├── bloc/
-│   │           │   ├── hotels/
-│   │           │   ├── rooms/
-│   │           │   ├── room_details/
-│   │           │   └── windows_overview/
-│   │           └── pages/
-│   │               ├── hotels_page.dart
-│   │               ├── rooms_page.dart
-│   │               ├── room_details_page.dart
-│   │               └── windows_overview_page.dart
-│   │
-│   ├── l10n/                         # Локализация
-│   │   ├── app_ru.arb
-│   │   ├── app_en.arb
-│   │   ├── app_localizations.dart
-│   │   ├── app_localizations_ru.dart
-│   │   └── app_localizations_en.dart
-│   │
-│   └── main.dart                     # Точка входа
-│
-├── test/                             # Тесты
-│   ├── widget_test.dart
-│   └── features/
-│       └── hotels/
-│           └── presentation/
-│               └── pages/
-│                   └── room_details_page_test.dart
-│
-├── assets/                           # Ресурсы
-│   └── images/
-│
-├── Backend/                          # Backend (GraphQL сервер)
-│
-├── pubspec.yaml                      # Зависимости Flutter
-└── README.md                         # Документация
+```text
+┌──────────────────────┐       ┌──────────────────────┐
+│     Flutter App      │       │      React Web       │
+│ BLoC + Clean Arch    │       │ React + Apollo       │
+└──────────┬───────────┘       └──────────┬───────────┘
+           │ GraphQL                      │ GraphQL
+           └──────────────┬───────────────┘
+                          ▼
+               ┌──────────────────────┐
+               │   Apollo Backend     │
+               │ Services + Repos     │
+               │ TypeScript + TypeORM │
+               └──────────────────────┘
 ```
 
----
+Related repositories:
 
-## 🚀 Установка и запуск
+- Backend: [Yaroslavgiv/hotel-booking-back](https://github.com/Yaroslavgiv/hotel-booking-back)
+- Web: [Yaroslavgiv/hotel-booking-web](https://github.com/Yaroslavgiv/hotel-booking-web)
 
-### Требования
+## Tech stack
 
-- **Flutter SDK** >= 3.9.2
-- **Dart SDK** >= 3.9.2
-- **Node.js** >= 16.x (для backend)
-- **Git**
+- Flutter / Dart
+- flutter_bloc
+- Equatable
+- GraphQL Flutter
+- Provider for dependency wiring
+- flutter_localizations / intl
+- Mocktail
+- Material Design
 
-### 1. Клонирование репозитория
+## Main flows
+
+### Authentication
+
+The app validates user details, stores authentication state in `AuthBloc`, and uses the current user to prefill booking information.
+
+### Hotels and rooms
+
+The client loads hotels through use cases and repository abstractions, displays availability state, opens hotel rooms, and filters rooms by price, type, and date range.
+
+### Booking
+
+The booking flow checks room availability before mutation, validates guest data and dates, creates bookings through GraphQL, refreshes state after successful operations, and supports cancellation.
+
+### Windows overview
+
+The desktop flow provides a compact hotel overview intended for operator-style usage and quick availability checks.
+
+## Getting started
+
+Prerequisites:
+
+- Flutter SDK compatible with Dart `^3.9.2`
+- running hotel booking GraphQL backend
 
 ```bash
-git clone <repository-url>
-cd MobApp
+git clone https://github.com/Yaroslavgiv/hotel-booking-app.git
+cd hotel-booking-app
+flutter pub get
+flutter run
 ```
 
-### 2. Установка зависимостей Flutter
+The backend repository contains the GraphQL API and local Docker setup.
+
+## Quality gates
+
+The CI pipeline validates every push and pull request with:
 
 ```bash
 flutter pub get
-```
-
-### 3. Запуск Backend
-
-```bash
-cd Backend
-npm install
-npm run dev
-```
-
-Backend будет доступен по адресу: `http://localhost:4001/graphql`
-
-**Примечание:** На Android эмуляторе используйте `http://10.0.2.2:4001/graphql` (настроено автоматически в `app_config.dart`)
-
-### 4. Запуск Flutter приложения
-
-#### Мобильное приложение (Android/iOS)
-
-```bash
-# Android
-flutter run
-
-# iOS (только на macOS)
-flutter run -d ios
-
-# Конкретное устройство
-flutter devices                    # Список устройств
-flutter run -d <device-id>
-```
-
-#### Windows Desktop виджет
-
-```bash
-flutter run -d windows
-```
-
-**Примечание:** На Windows автоматически открывается `WindowsOverviewPage`, на мобильных устройствах – `AuthPage` → `HotelsPage`
-
-### 5. Генерация локализации
-
-Локализация генерируется автоматически при запуске `flutter pub get`. Если нужно перегенерировать:
-
-```bash
-flutter gen-l10n
-```
-
----
-
-## 🧪 Тестирование
-
-### Запуск всех тестов
-
-```bash
+flutter analyze
 flutter test
 ```
 
-### Запуск конкретного теста
-
-```bash
-flutter test test/features/hotels/presentation/pages/room_details_page_test.dart
-```
-
-### Структура тестов
-
-Тесты организованы по структуре приложения:
-
-```
-test/
-└── features/
-    └── hotels/
-        └── presentation/
-            └── pages/
-                └── room_details_page_test.dart
-```
-
-### Примеры тестов
-
-**Widget тесты:**
-- Отображение индикатора загрузки
-- Отображение ошибок
-- Отображение данных
-- Взаимодействие с UI элементами
-- Валидация форм
-
-**Используемые инструменты:**
-- `flutter_test` – базовый фреймворк
-- `mocktail` – создание моков
-- `TestWidget` – тестирование виджетов
-
----
-
-## 🌍 Локализация
-
-Приложение поддерживает два языка:
-- **Русский** (ru) – язык по умолчанию
-- **Английский** (en)
-
-### Файлы локализации
-
-- `lib/l10n/app_ru.arb` – русские строки
-- `lib/l10n/app_en.arb` – английские строки
-
-### Использование в коде
-
-```dart
-final l10n = AppLocalizations.of(context);
-Text(l10n.hotelsTitle)
-```
-
-### Добавление новой строки
-
-1. Добавьте строку в `.arb` файлы:
-```json
-{
-  "@hotelsTitle": {},
-  "hotelsTitle": "Отели"
-}
-```
-
-2. Перегенерируйте локализацию:
-```bash
-flutter gen-l10n
-```
-
-3. Используйте в коде:
-```dart
-Text(l10n.hotelsTitle)
-```
-
----
-
-## 🔌 Интеграция с Backend
-
-### GraphQL Endpoint
-
-Настраивается в `lib/core/config/app_config.dart`:
-
-```dart
-static String get graphQLEndpoint {
-  if (Platform.isAndroid) {
-    return 'http://10.0.2.2:4001/graphql';  // Android Emulator
-  }
-  return 'http://localhost:4001/graphql';   // iOS/Windows
-}
-```
-
-### Основные GraphQL операции
-
-#### Запросы (Queries)
-
-**1. Получение списка отелей**
-```graphql
-query GetHotels {
-  hotels {
-    id
-    name
-    address
-    description
-  }
-}
-```
-
-**2. Получение номеров отеля**
-```graphql
-query GetRoomsByHotel($hotelId: ID!) {
-  roomsByHotel(hotelId: $hotelId) {
-    id
-    number
-    type
-    price
-    hotelId
-  }
-}
-```
-
-**3. Получение деталей номера**
-```graphql
-query GetRooms {
-  rooms {
-    id
-    number
-    type
-    price
-    hotel { id }
-  }
-}
-```
-
-**4. Проверка доступности**
-```graphql
-query CheckAvailability($roomId: ID!, $checkIn: String!, $checkOut: String!) {
-  checkAvailability(roomId: $roomId, checkIn: $checkIn, checkOut: $checkOut) {
-    available
-    conflictingBookings {
-      id
-      guestName
-      guestEmail
-      checkIn
-      checkOut
-      roomId
-      isActive
-    }
-  }
-}
-```
-
-#### Мутации (Mutations)
-
-**1. Создание бронирования**
-```graphql
-mutation CreateBooking($input: CreateBookingInput!) {
-  createBooking(input: $input) {
-    id
-    guestName
-    guestEmail
-    checkIn
-    checkOut
-    roomId
-    isActive
-  }
-}
-```
-
-**2. Отмена бронирования**
-```graphql
-mutation CancelBooking($id: ID!) {
-  cancelBooking(id: $id) {
-    id
-    isActive
-    roomId
-    checkIn
-    checkOut
-    guestName
-    guestEmail
-  }
-}
-```
-
-### Обработка ошибок
-
-Все GraphQL ошибки обрабатываются в `HotelRemoteDataSource`:
-
-```dart
-if (result.hasException) {
-  throw result.exception!;
-}
-```
-
-Ошибки маппятся в понятные сообщения в BLoC слое.
-
----
-
-## 💻 Разработка
-
-### Стиль кода
-
-Проект использует стандартные правила Flutter:
-- `flutter_lints` ^5.0.0
-- Автоматическое форматирование через `dart format`
-
-### Форматирование кода
-
-```bash
-dart format lib/
-dart format test/
-```
-
-### Анализ кода
+Run locally:
 
 ```bash
 flutter analyze
+flutter test
 ```
 
-### Сборка релизной версии
+## Testing strategy
 
-#### Android
+The project is structured to support multiple testing layers:
 
-```bash
-flutter build apk --release
-# или
-flutter build appbundle --release
-```
+- domain and use-case unit tests
+- repository tests with mocked remote data sources
+- BLoC tests for state transitions
+- widget tests for presentation behavior
+- integration tests for critical booking flows
 
-#### iOS
+The next quality milestone is expanding coverage around GraphQL failures, booking conflicts, BLoC state transitions, and end-to-end booking scenarios.
 
-```bash
-flutter build ios --release
-```
+## Engineering roadmap
 
-#### Windows
+- strengthen typed error/failure handling
+- separate booking capability into its own feature boundary
+- formalize dependency injection composition
+- expand BLoC and widget test coverage
+- add integration tests for critical booking flows
+- add production environment configuration
+- add release build workflow
 
-```bash
-flutter build windows --release
-```
+## License
 
-### Hot Reload
-
-Во время разработки используйте Hot Reload для быстрого обновления UI:
-
-- **VS Code:** `Ctrl+F5` или `Cmd+F5`
-- **Android Studio:** Кнопка Hot Reload
-- **Терминал:** `r` в консоли Flutter
-
----
-
-## 📝 Дополнительная информация
-
-### Особенности реализации
-
-1. **Автоматическое заполнение данных гостя**
-   - При авторизации данные сохраняются в `AuthBloc`
-   - При открытии `RoomDetailsPage` данные автоматически подставляются
-   - Можно редактировать перед бронированием
-
-2. **Фильтрация номеров**
-   - Фильтры применяются в реальном времени
-   - Сохранение состояния фильтров в `RoomsBloc`
-   - Визуальная индикация активных фильтров
-
-3. **Управление бронированиями**
-   - Показываются только бронирования текущего пользователя (по email)
-   - Отмена доступна только для активных бронирований
-   - Подтверждение перед отменой
-
-4. **Проверка доступности**
-   - Проверка на выбранный диапазон дат
-   - Отображение конфликтующих бронирований
-   - Визуальная индикация статуса
-
-### Возможные улучшения
-
-- [ ] Авторизация через OAuth/социальные сети
-- [ ] Push-уведомления о бронированиях
-- [ ] История бронирований
-- [ ] Поиск отелей по названию/адресу
-- [ ] Избранные отели
-- [ ] Отзывы и рейтинги
-- [ ] Интеграция с платежными системами
-- [ ] Календарь доступности номеров
-- [ ] Экспорт бронирований в календарь
-- [ ] Темная тема
-
+This repository is maintained as a portfolio and engineering showcase project.
