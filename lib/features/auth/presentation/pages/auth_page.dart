@@ -44,16 +44,15 @@ class _AuthPageState extends State<AuthPage> {
     }
 
     context.read<AuthBloc>().add(
-          AuthCredentialsSubmitted(name: name, email: email),
-        );
+      AuthCredentialsSubmitted(name: name, email: email),
+    );
 
     final bool isWindows = defaultTargetPlatform == TargetPlatform.windows;
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<Widget>(
-        builder: (_) => isWindows
-            ? const WindowsOverviewPage()
-            : const HotelsPage(),
+        builder: (_) =>
+            isWindows ? const WindowsOverviewPage() : const HotelsPage(),
       ),
     );
   }
@@ -95,17 +94,17 @@ class _AuthPageState extends State<AuthPage> {
                           children: <Widget>[
                             Text(
                               l10n.appTitle,
-                              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                color: onPrimary.withOpacity(0.8),
-                              ),
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(color: onPrimary.withOpacity(0.8)),
                             ),
                             const SizedBox(height: 4),
                             Text(
                               l10n.authTitle,
-                              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: onPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.titleLarge
+                                  ?.copyWith(
+                                    color: onPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
@@ -113,10 +112,7 @@ class _AuthPageState extends State<AuthPage> {
                       const SizedBox(width: 12),
                       CircleAvatar(
                         backgroundColor: onPrimary.withOpacity(0.15),
-                        child: Icon(
-                          Icons.person_outline,
-                          color: onPrimary,
-                        ),
+                        child: Icon(Icons.person_outline, color: onPrimary),
                       ),
                     ],
                   ),
@@ -146,106 +142,109 @@ class _AuthPageState extends State<AuthPage> {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[
-                      Text(
-                        'Введите ваши данные',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
+                        Text(
+                          'Введите ваши данные',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
-                      ),
-                      const SizedBox(height: 24),
-                      // Поле имени
-                      TextField(
-                        controller: _nameController,
-                        decoration: InputDecoration(
-                          labelText: l10n.authNameLabel,
-                          prefixIcon: const Icon(Icons.person_outline),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: primary, width: 2),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey[50],
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Поле email
-                      TextField(
-                        controller: _emailController,
-                        decoration: InputDecoration(
-                          labelText: l10n.authEmailLabel,
-                          prefixIcon: const Icon(Icons.email_outlined),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(16),
-                            borderSide: BorderSide(color: primary, width: 2),
-                          ),
-                          filled: true,
-                          fillColor: Colors.grey[50],
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                      ),
-                      const SizedBox(height: 20),
-                      // Сообщение об ошибке
-                      if (_error != null)
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.red[50],
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.red[200]!),
-                          ),
-                          child: Row(
-                            children: <Widget>[
-                              Icon(Icons.error_outline, color: Colors.red[700], size: 20),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  _error!,
-                                  style: TextStyle(
-                                    color: Colors.red[700],
-                                    fontSize: 13,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      if (_error != null) const SizedBox(height: 20),
-                      // Кнопка входа
-                      SizedBox(
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: _submit,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: primary,
-                            foregroundColor: onPrimary,
-                            shape: RoundedRectangleBorder(
+                        const SizedBox(height: 24),
+                        // Поле имени
+                        TextField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            labelText: l10n.authNameLabel,
+                            prefixIcon: const Icon(Icons.person_outline),
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            elevation: 0,
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: primary, width: 2),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
                           ),
-                          child: Text(
-                            l10n.authContinue,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
+                        ),
+                        const SizedBox(height: 16),
+                        // Поле email
+                        TextField(
+                          controller: _emailController,
+                          decoration: InputDecoration(
+                            labelText: l10n.authEmailLabel,
+                            prefixIcon: const Icon(Icons.email_outlined),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide(color: primary, width: 2),
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey[50],
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                        ),
+                        const SizedBox(height: 20),
+                        // Сообщение об ошибке
+                        if (_error != null)
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.red[50],
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: Colors.red[200]!),
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red[700],
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    _error!,
+                                    style: TextStyle(
+                                      color: Colors.red[700],
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (_error != null) const SizedBox(height: 20),
+                        // Кнопка входа
+                        SizedBox(
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: _submit,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: primary,
+                              foregroundColor: onPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              l10n.authContinue,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
-                      ),
                       ],
                     ),
                   ),
@@ -258,4 +257,3 @@ class _AuthPageState extends State<AuthPage> {
     );
   }
 }
-

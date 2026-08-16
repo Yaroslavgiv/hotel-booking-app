@@ -10,4 +10,3 @@ class GetHotelsUseCase {
     return _repository.getHotels();
   }
 }
-

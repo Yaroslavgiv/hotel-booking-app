@@ -35,10 +35,7 @@ class RoomsBloc extends Bloc<RoomsEvent, RoomsState> {
       );
     } catch (e) {
       emit(
-        state.copyWith(
-          status: RoomsStatus.failure,
-          errorMessage: e.toString(),
-        ),
+        state.copyWith(status: RoomsStatus.failure, errorMessage: e.toString()),
       );
     }
   }
@@ -77,4 +74,3 @@ class RoomsBloc extends Bloc<RoomsEvent, RoomsState> {
     );
   }
 }
-

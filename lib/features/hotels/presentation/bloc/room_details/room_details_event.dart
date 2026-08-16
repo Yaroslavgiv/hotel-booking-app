@@ -53,10 +53,7 @@ class CancelBookingRequested extends RoomDetailsEvent {
 }
 
 class GuestInfoChanged extends RoomDetailsEvent {
-  const GuestInfoChanged({
-    required this.name,
-    required this.email,
-  });
+  const GuestInfoChanged({required this.name, required this.email});
 
   final String name;
   final String email;

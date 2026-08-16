@@ -52,15 +52,14 @@ class RoomsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        rooms,
-        allRooms,
-        minPrice,
-        maxPrice,
-        selectedType,
-        filterStart,
-        filterEnd,
-        errorMessage,
-      ];
+    status,
+    rooms,
+    allRooms,
+    minPrice,
+    maxPrice,
+    selectedType,
+    filterStart,
+    filterEnd,
+    errorMessage,
+  ];
 }
-

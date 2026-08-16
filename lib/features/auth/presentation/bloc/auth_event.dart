@@ -8,10 +8,7 @@ abstract class AuthEvent extends Equatable {
 }
 
 class AuthCredentialsSubmitted extends AuthEvent {
-  const AuthCredentialsSubmitted({
-    required this.name,
-    required this.email,
-  });
+  const AuthCredentialsSubmitted({required this.name, required this.email});
 
   final String name;
   final String email;
@@ -23,4 +20,3 @@ class AuthCredentialsSubmitted extends AuthEvent {
 class AuthLoggedOut extends AuthEvent {
   const AuthLoggedOut();
 }
-

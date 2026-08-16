@@ -9,4 +9,3 @@ class AvailabilityInfo {
   final bool available;
   final List<Booking> conflictingBookings;
 }
-

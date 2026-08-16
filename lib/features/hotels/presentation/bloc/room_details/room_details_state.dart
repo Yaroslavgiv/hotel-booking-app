@@ -57,16 +57,15 @@ class RoomDetailsState extends Equatable {
 
   @override
   List<Object?> get props => [
-        status,
-        room,
-        bookings,
-        selectedStart,
-        selectedEnd,
-        isAvailable,
-        errorMessage,
-        guestName,
-        guestEmail,
-        conflictingBookings,
-      ];
+    status,
+    room,
+    bookings,
+    selectedStart,
+    selectedEnd,
+    isAvailable,
+    errorMessage,
+    guestName,
+    guestEmail,
+    conflictingBookings,
+  ];
 }
-

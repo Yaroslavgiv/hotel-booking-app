@@ -29,4 +29,3 @@ abstract class HotelRepository {
 
   Future<void> cancelBooking(String bookingId);
 }
-

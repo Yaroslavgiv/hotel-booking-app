@@ -10,4 +10,3 @@ class GetRoomsByHotelUseCase {
     return _repository.getRooms(hotelId);
   }
 }
-

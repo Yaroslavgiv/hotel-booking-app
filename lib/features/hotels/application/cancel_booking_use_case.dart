@@ -9,4 +9,3 @@ class CancelBookingUseCase {
     return _repository.cancelBooking(bookingId);
   }
 }
-

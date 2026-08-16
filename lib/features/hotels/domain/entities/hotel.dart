@@ -16,4 +16,3 @@ class Hotel extends Equatable {
   @override
   List<Object?> get props => [id, name, address, description];
 }
-

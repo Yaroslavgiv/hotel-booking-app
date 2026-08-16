@@ -15,4 +15,3 @@ class AppConfig {
     return 'http://localhost:4001/graphql';
   }
 }
-

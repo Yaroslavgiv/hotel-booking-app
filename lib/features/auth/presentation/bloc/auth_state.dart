@@ -24,4 +24,3 @@ class AuthAuthenticated extends AuthState {
 class AuthUnauthenticated extends AuthState {
   const AuthUnauthenticated();
 }
-

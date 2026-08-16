@@ -44,4 +44,3 @@ class WindowsOverviewState extends Equatable {
   @override
   List<Object?> get props => [status, items, errorMessage];
 }
-

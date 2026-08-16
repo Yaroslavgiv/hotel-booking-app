@@ -29,11 +29,7 @@ class HotelRepositoryImpl implements HotelRepository {
     required DateTime start,
     required DateTime end,
   }) async {
-    return _remote.checkAvailability(
-      roomId: roomId,
-      start: start,
-      end: end,
-    );
+    return _remote.checkAvailability(roomId: roomId, start: start, end: end);
   }
 
   @override
@@ -43,17 +39,15 @@ class HotelRepositoryImpl implements HotelRepository {
     required DateTime end,
     required String guestName,
     required String guestEmail,
-  }) =>
-      _remote.createBooking(
-        roomId: roomId,
-        start: start,
-        end: end,
-        guestName: guestName,
-        guestEmail: guestEmail,
-      );
+  }) => _remote.createBooking(
+    roomId: roomId,
+    start: start,
+    end: end,
+    guestName: guestName,
+    guestEmail: guestEmail,
+  );
 
   @override
   Future<void> cancelBooking(String bookingId) =>
       _remote.cancelBooking(bookingId);
 }
-

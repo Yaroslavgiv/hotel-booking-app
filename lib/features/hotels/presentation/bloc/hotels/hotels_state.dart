@@ -46,6 +46,10 @@ class HotelsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, hotels, errorMessage, availabilityStatuses];
+  List<Object?> get props => [
+    status,
+    hotels,
+    errorMessage,
+    availabilityStatuses,
+  ];
 }
-

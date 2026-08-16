@@ -41,8 +41,11 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
       // чтобы сразу показать недоступные интервалы.
       // Используем завтрашний день для проверки, чтобы избежать проблем с часовыми поясами
       final DateTime now = DateTime.now();
-      final DateTime tomorrowStart = DateTime(now.year, now.month, now.day)
-          .add(const Duration(days: 1));
+      final DateTime tomorrowStart = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).add(const Duration(days: 1));
       final info = await _checkAvailability(
         CheckAvailabilityParams(
           roomId: event.roomId,
