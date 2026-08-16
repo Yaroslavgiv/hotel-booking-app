@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_bloc.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_event.dart';
@@ -18,14 +16,11 @@ class HotelsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final repository = HotelRepositoryImpl(HotelRemoteDataSource());
-    final GetHotelsUseCase getHotels = GetHotelsUseCase(repository);
-    final GetRoomsByHotelUseCase getRoomsByHotel = GetRoomsByHotelUseCase(
-      repository,
-    );
-    final CheckAvailabilityUseCase checkAvailability = CheckAvailabilityUseCase(
-      repository,
-    );
+    final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
+    final GetRoomsByHotelUseCase getRoomsByHotel =
+        context.read<GetRoomsByHotelUseCase>();
+    final CheckAvailabilityUseCase checkAvailability =
+        context.read<CheckAvailabilityUseCase>();
 
     final Color primary = Theme.of(context).colorScheme.primary;
     final Color onPrimary = Theme.of(context).colorScheme.onPrimary;

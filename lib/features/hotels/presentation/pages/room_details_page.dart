@@ -8,8 +8,6 @@ import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_room_details_use_case.dart';
-import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_bloc.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_event.dart';
@@ -23,11 +21,14 @@ class RoomDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final repository = HotelRepositoryImpl(HotelRemoteDataSource());
-    final getRoomDetails = GetRoomDetailsUseCase(repository);
-    final checkAvailability = CheckAvailabilityUseCase(repository);
-    final createBooking = CreateBookingUseCase(repository);
-    final cancelBooking = CancelBookingUseCase(repository);
+    final GetRoomDetailsUseCase getRoomDetails =
+        context.read<GetRoomDetailsUseCase>();
+    final CheckAvailabilityUseCase checkAvailability =
+        context.read<CheckAvailabilityUseCase>();
+    final CreateBookingUseCase createBooking =
+        context.read<CreateBookingUseCase>();
+    final CancelBookingUseCase cancelBooking =
+        context.read<CancelBookingUseCase>();
 
     return BlocProvider<RoomDetailsBloc>(
       create: (BuildContext ctx) {

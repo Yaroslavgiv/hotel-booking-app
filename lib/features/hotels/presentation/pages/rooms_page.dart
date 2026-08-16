@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_booking_app/l10n/app_localizations.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/rooms/rooms_bloc.dart';
@@ -20,8 +18,8 @@ class RoomsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final repository = HotelRepositoryImpl(HotelRemoteDataSource());
-    final getRoomsByHotel = GetRoomsByHotelUseCase(repository);
+    final GetRoomsByHotelUseCase getRoomsByHotel =
+        context.read<GetRoomsByHotelUseCase>();
 
     final Color primary = Theme.of(context).colorScheme.primary;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
@@ -45,7 +46,7 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
       emit(
         state.copyWith(
           status: HotelsStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failureMessage(e),
         ),
       );
     }

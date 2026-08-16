@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
 import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
@@ -96,7 +96,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
       emit(
         state.copyWith(
           status: RoomDetailsStatus.failure,
-          errorMessage: _mapErrorToMessage(e),
+          errorMessage: failureMessage(e),
         ),
       );
     }
@@ -205,7 +205,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(errorMessage: _mapErrorToMessage(e)));
+      emit(state.copyWith(errorMessage: failureMessage(e)));
     }
   }
 
@@ -258,7 +258,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(errorMessage: _mapErrorToMessage(e)));
+      emit(state.copyWith(errorMessage: failureMessage(e)));
     }
   }
 
@@ -268,15 +268,4 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
   ) {
     emit(state.copyWith(guestName: event.name, guestEmail: event.email));
   }
-}
-
-String _mapErrorToMessage(Object error) {
-  if (error is OperationException && error.graphqlErrors.isNotEmpty) {
-    // Берём только человеко-понятное сообщение из GraphQL,
-    // без трассировки и прочего шума.
-    return error.graphqlErrors.first.message;
-  }
-
-  // Фолбэк на случай других ошибок сети/клиента.
-  return 'Произошла ошибка при обработке запроса. Попробуйте ещё раз.';
 }

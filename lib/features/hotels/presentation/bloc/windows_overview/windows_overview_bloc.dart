@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
@@ -136,7 +137,7 @@ class WindowsOverviewBloc
       emit(
         state.copyWith(
           status: WindowsOverviewStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failureMessage(e),
         ),
       );
     }

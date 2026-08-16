@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:hotel_booking_app/app/di/app_dependencies.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:hotel_booking_app/l10n/app_localizations.dart';
 import 'package:hotel_booking_app/features/auth/presentation/pages/auth_page.dart';
@@ -14,25 +15,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (_) => AuthBloc(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        onGenerateTitle: (BuildContext context) =>
-            AppLocalizations.of(context).appTitle,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
+    return AppDependencies(
+      child: BlocProvider<AuthBloc>(
+        create: (_) => AuthBloc(),
+        child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateTitle: (BuildContext context) =>
+              AppLocalizations.of(context).appTitle,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+            useMaterial3: true,
+          ),
+          localizationsDelegates: <LocalizationsDelegate<dynamic>>[
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: const <Locale>[Locale('ru'), Locale('en')],
+          locale: const Locale('ru'),
+          home: const AuthPage(),
         ),
-        localizationsDelegates: <LocalizationsDelegate<dynamic>>[
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const <Locale>[Locale('ru'), Locale('en')],
-        locale: const Locale('ru'),
-        home: const AuthPage(),
       ),
     );
   }

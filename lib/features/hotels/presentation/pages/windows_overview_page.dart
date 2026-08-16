@@ -4,8 +4,6 @@ import 'package:hotel_booking_app/l10n/app_localizations.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:hotel_booking_app/features/hotels/data/repositories/hotel_repository_impl.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/windows_overview/windows_overview_bloc.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/windows_overview/windows_overview_event.dart';
 import 'package:hotel_booking_app/features/hotels/presentation/bloc/windows_overview/windows_overview_state.dart';
@@ -17,10 +15,11 @@ class WindowsOverviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final repository = HotelRepositoryImpl(HotelRemoteDataSource());
-    final getHotels = GetHotelsUseCase(repository);
-    final getRoomsByHotel = GetRoomsByHotelUseCase(repository);
-    final checkAvailability = CheckAvailabilityUseCase(repository);
+    final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
+    final GetRoomsByHotelUseCase getRoomsByHotel =
+        context.read<GetRoomsByHotelUseCase>();
+    final CheckAvailabilityUseCase checkAvailability =
+        context.read<CheckAvailabilityUseCase>();
 
     return BlocProvider<WindowsOverviewBloc>(
       create: (_) =>

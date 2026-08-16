@@ -39,11 +39,11 @@ UI -> BLoC -> Use Case -> Repository contract
 
 BLoC is the primary state-management approach. A BLoC should own one cohesive state machine and delegate business operations to use cases instead of directly performing network access.
 
-## Error handling target
+## Error handling
 
 Transport exceptions should be translated at the data boundary into application/domain failures. Presentation should receive meaningful failure types rather than GraphQL client exceptions.
 
-Target model:
+Implemented flow:
 
 ```text
 GraphQL exception
@@ -67,6 +67,15 @@ User-facing state
 4. Widget tests for critical presentation behavior.
 5. Integration tests for booking and cancellation flows.
 
+## Composition root
+
+`AppDependencies` owns long-lived infrastructure, the repository, and use-case
+construction. Pages request use cases from the widget tree and only construct
+their page-scoped BLoCs. This prevents new GraphQL clients and caches from being
+created on every rebuild.
+
 ## Evolution
 
-As the application grows, bookings should become a separate feature boundary and dependency construction should move to a dedicated composition root. Infrastructure such as environment configuration, logging, and failure mapping belongs in `core` rather than feature UI code.
+As the application grows, bookings should become a separate feature boundary.
+Infrastructure such as environment configuration and logging belongs in `core`
+rather than feature UI code.

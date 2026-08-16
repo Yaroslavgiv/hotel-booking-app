@@ -1,3 +1,4 @@
+import 'package:hotel_booking_app/core/errors/failure_mapper.dart';
 import 'package:hotel_booking_app/features/hotels/data/datasources/hotel_remote_data_source.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
@@ -6,22 +7,28 @@ import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repo
 import 'package:hotel_booking_app/features/hotels/domain/value_objects/availability_info.dart';
 
 class HotelRepositoryImpl implements HotelRepository {
-  HotelRepositoryImpl(this._remote);
+  HotelRepositoryImpl(
+    this._remote, {
+    FailureMapper failureMapper = const FailureMapper(),
+  }) : _failureMapper = failureMapper;
 
   final HotelRemoteDataSource _remote;
+  final FailureMapper _failureMapper;
 
   @override
-  Future<List<Hotel>> getHotels() => _remote.fetchHotels();
+  Future<List<Hotel>> getHotels() => _guard(_remote.fetchHotels);
 
   @override
-  Future<List<Room>> getRooms(String hotelId) => _remote.fetchRooms(hotelId);
+  Future<List<Room>> getRooms(String hotelId) =>
+      _guard(() => _remote.fetchRooms(hotelId));
 
   @override
-  Future<Room> getRoomById(String roomId) => _remote.fetchRoomById(roomId);
+  Future<Room> getRoomById(String roomId) =>
+      _guard(() => _remote.fetchRoomById(roomId));
 
   @override
   Future<List<Booking>> getRoomBookings(String roomId) =>
-      _remote.fetchRoomBookings(roomId);
+      _guard(() => _remote.fetchRoomBookings(roomId));
 
   @override
   Future<AvailabilityInfo> checkAvailability({
@@ -29,7 +36,9 @@ class HotelRepositoryImpl implements HotelRepository {
     required DateTime start,
     required DateTime end,
   }) async {
-    return _remote.checkAvailability(roomId: roomId, start: start, end: end);
+    return _guard(
+      () => _remote.checkAvailability(roomId: roomId, start: start, end: end),
+    );
   }
 
   @override
@@ -39,15 +48,26 @@ class HotelRepositoryImpl implements HotelRepository {
     required DateTime end,
     required String guestName,
     required String guestEmail,
-  }) => _remote.createBooking(
-    roomId: roomId,
-    start: start,
-    end: end,
-    guestName: guestName,
-    guestEmail: guestEmail,
+  }) => _guard(
+    () => _remote.createBooking(
+      roomId: roomId,
+      start: start,
+      end: end,
+      guestName: guestName,
+      guestEmail: guestEmail,
+    ),
   );
 
   @override
   Future<void> cancelBooking(String bookingId) =>
-      _remote.cancelBooking(bookingId);
+      _guard(() => _remote.cancelBooking(bookingId));
+
+  Future<T> _guard<T>(Future<T> Function() request) async {
+    try {
+      return await request();
+    } on Object catch (error) {
+      throw _failureMapper.map(error);
+    }
+  }
 }
+import 'package:hotel_booking_app/core/errors/failure_mapper.dart';
