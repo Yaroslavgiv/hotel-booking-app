@@ -57,16 +57,18 @@ void main() {
 
   test('restoreSession returns the current user for a stored token', () async {
     when(() => tokenStorage.read()).thenAnswer((_) async => 'access-token');
-    when(() => remoteDataSource.fetchCurrentUser())
-        .thenAnswer((_) async => user);
+    when(
+      () => remoteDataSource.fetchCurrentUser(),
+    ).thenAnswer((_) async => user);
 
     expect(await repository.restoreSession(), user);
   });
 
   test('restoreSession clears a rejected session', () async {
     when(() => tokenStorage.read()).thenAnswer((_) async => 'expired-token');
-    when(() => remoteDataSource.fetchCurrentUser())
-        .thenThrow(Exception('session rejected'));
+    when(
+      () => remoteDataSource.fetchCurrentUser(),
+    ).thenThrow(Exception('session rejected'));
     when(() => tokenStorage.clear()).thenAnswer((_) async {});
 
     await expectLater(repository.restoreSession(), throwsA(isA<Failure>()));

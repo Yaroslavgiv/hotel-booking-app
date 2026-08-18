@@ -203,17 +203,17 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                                   state.guestName!.isNotEmpty)
                                                 Text(
                                                   'Гость: ${state.guestName}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium,
                                                 ),
                                               if (state.guestEmail != null &&
                                                   state.guestEmail!.isNotEmpty)
                                                 Text(
                                                   'Email: ${state.guestEmail}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium,
                                                 ),
                                             ],
                                           ),
@@ -290,9 +290,9 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                             children: <Widget>[
                                               Text(
                                                 l10n.conflictingBookingsTitle,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodyMedium,
                                               ),
                                               const SizedBox(height: 4),
                                               for (final Booking b
@@ -300,9 +300,9 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                                 Text(
                                                   '- ${b.startDate.toString().split(' ')[0]} — '
                                                   '${b.endDate.toString().split(' ')[0]}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodySmall,
                                                 ),
                                             ],
                                           ),
