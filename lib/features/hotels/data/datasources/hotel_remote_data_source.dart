@@ -60,8 +60,6 @@ query CheckAvailability($roomId: ID!, $checkIn: String!, $checkOut: String!) {
     available
     conflictingBookings {
       id
-      guestName
-      guestEmail
       checkIn
       checkOut
       roomId
