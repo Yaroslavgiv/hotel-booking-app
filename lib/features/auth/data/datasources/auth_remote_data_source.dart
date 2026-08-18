@@ -1,3 +1,4 @@
+import 'package:gql/ast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hotel_booking_app/core/network/graphql_api_client.dart';
 import 'package:hotel_booking_app/features/auth/domain/entities/auth_session.dart';
