@@ -1,5 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_booking_app/core/network/graphql_api_client.dart';
+import 'package:hotel_booking_app/core/security/secure_token_storage.dart';
+import 'package:hotel_booking_app/core/security/token_storage.dart';
+import 'package:hotel_booking_app/features/auth/application/auth_use_cases.dart';
+import 'package:hotel_booking_app/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:hotel_booking_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:hotel_booking_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
@@ -19,8 +26,40 @@ class AppDependencies extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<TokenStorage>(create: (_) => SecureTokenStorage()),
+        RepositoryProvider<GraphQLApiClient>(
+          create: (BuildContext context) =>
+              GraphQLApiClient(context.read<TokenStorage>()),
+        ),
+        RepositoryProvider<AuthRemoteDataSource>(
+          create: (BuildContext context) =>
+              AuthRemoteDataSource(context.read<GraphQLApiClient>()),
+        ),
+        RepositoryProvider<AuthRepository>(
+          create: (BuildContext context) => AuthRepositoryImpl(
+            context.read<AuthRemoteDataSource>(),
+            context.read<TokenStorage>(),
+          ),
+        ),
+        RepositoryProvider<LoginUseCase>(
+          create: (BuildContext context) =>
+              LoginUseCase(context.read<AuthRepository>()),
+        ),
+        RepositoryProvider<RegisterUseCase>(
+          create: (BuildContext context) =>
+              RegisterUseCase(context.read<AuthRepository>()),
+        ),
+        RepositoryProvider<RestoreSessionUseCase>(
+          create: (BuildContext context) =>
+              RestoreSessionUseCase(context.read<AuthRepository>()),
+        ),
+        RepositoryProvider<LogoutUseCase>(
+          create: (BuildContext context) =>
+              LogoutUseCase(context.read<AuthRepository>()),
+        ),
         RepositoryProvider<HotelRemoteDataSource>(
-          create: (_) => HotelRemoteDataSource(),
+          create: (BuildContext context) =>
+              HotelRemoteDataSource(context.read<GraphQLApiClient>()),
         ),
         RepositoryProvider<HotelRepository>(
           create: (BuildContext context) =>

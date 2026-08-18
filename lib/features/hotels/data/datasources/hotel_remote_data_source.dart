@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:hotel_booking_app/core/config/app_config.dart';
+import 'package:hotel_booking_app/core/network/graphql_api_client.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
 import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
@@ -8,17 +7,11 @@ import 'package:hotel_booking_app/features/hotels/domain/value_objects/availabil
 
 /// Реальный remote data source, работающий с GraphQL-схемой Backend.
 class HotelRemoteDataSource {
-  HotelRemoteDataSource()
-    : _client = ValueNotifier<GraphQLClient>(
-        GraphQLClient(
-          link: HttpLink(AppConfig.graphQLEndpoint),
-          cache: GraphQLCache(),
-        ),
-      );
+  HotelRemoteDataSource(this._apiClient);
 
-  final ValueNotifier<GraphQLClient> _client;
+  final GraphQLApiClient _apiClient;
 
-  GraphQLClient get client => _client.value;
+  GraphQLClient get client => _apiClient.client;
 
   /// -----------------
   /// GraphQL запросы

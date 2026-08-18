@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hotel_booking_app/features/auth/application/auth_use_cases.dart';
 import 'package:hotel_booking_app/features/auth/domain/entities/user.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_state.dart';
@@ -18,6 +19,14 @@ import 'package:hotel_booking_app/l10n/app_localizations.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockHotelRepository extends Mock implements HotelRepository {}
+
+class MockLoginUseCase extends Mock implements LoginUseCase {}
+
+class MockRegisterUseCase extends Mock implements RegisterUseCase {}
+
+class MockRestoreSessionUseCase extends Mock implements RestoreSessionUseCase {}
+
+class MockLogoutUseCase extends Mock implements LogoutUseCase {}
 
 class TestRoomDetailsBloc extends RoomDetailsBloc {
   TestRoomDetailsBloc(RoomDetailsState initialState)
@@ -194,17 +203,17 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                                   state.guestName!.isNotEmpty)
                                                 Text(
                                                   'Гость: ${state.guestName}',
-                                                  style: Theme.of(
-                                                    context,
-                                                  ).textTheme.bodyMedium,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
                                                 ),
                                               if (state.guestEmail != null &&
                                                   state.guestEmail!.isNotEmpty)
                                                 Text(
                                                   'Email: ${state.guestEmail}',
-                                                  style: Theme.of(
-                                                    context,
-                                                  ).textTheme.bodyMedium,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium,
                                                 ),
                                             ],
                                           ),
@@ -281,9 +290,9 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                             children: <Widget>[
                                               Text(
                                                 l10n.conflictingBookingsTitle,
-                                                style: Theme.of(
-                                                  context,
-                                                ).textTheme.bodyMedium,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium,
                                               ),
                                               const SizedBox(height: 4),
                                               for (final Booking b
@@ -291,9 +300,9 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                                 Text(
                                                   '- ${b.startDate.toString().split(' ')[0]} — '
                                                   '${b.endDate.toString().split(' ')[0]}',
-                                                  style: Theme.of(
-                                                    context,
-                                                  ).textTheme.bodySmall,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
                                                 ),
                                             ],
                                           ),
@@ -469,7 +478,12 @@ void main() {
     late AuthBloc authBloc;
 
     setUp(() {
-      authBloc = AuthBloc();
+      authBloc = AuthBloc(
+        MockLoginUseCase(),
+        MockRegisterUseCase(),
+        MockRestoreSessionUseCase(),
+        MockLogoutUseCase(),
+      );
     });
 
     tearDown(() {
@@ -563,7 +577,12 @@ void main() {
         price: 2500.0,
       );
 
-      final user = const User(name: 'Иван Иванов', email: 'ivan@test.com');
+      final user = const User(
+        id: 'user-1',
+        name: 'Иван Иванов',
+        email: 'ivan@test.com',
+        role: 'USER',
+      );
 
       await tester.pumpWidget(
         createTestWidget(

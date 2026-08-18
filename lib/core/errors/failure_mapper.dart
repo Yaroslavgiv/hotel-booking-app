@@ -43,6 +43,8 @@ class FailureMapper {
       'BAD_USER_INPUT' ||
       'VALIDATION_ERROR' => ValidationFailure(message, cause: error),
       'NOT_FOUND' => NotFoundFailure(message, cause: error),
+      'UNAUTHENTICATED' ||
+      'FORBIDDEN' => AuthenticationFailure(message, cause: error),
       _ => ServerFailure(message, cause: error),
     };
   }

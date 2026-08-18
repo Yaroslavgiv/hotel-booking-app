@@ -31,3 +31,7 @@ final class DataMappingFailure extends Failure {
 final class UnknownFailure extends Failure {
   const UnknownFailure(super.message, {super.cause});
 }
+
+final class AuthenticationFailure extends Failure {
+  const AuthenticationFailure(super.message, {super.cause});
+}
