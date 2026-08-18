@@ -135,17 +135,17 @@ class RoomDetailsPage extends StatelessWidget {
                                                   state.guestName!.isNotEmpty)
                                                 Text(
                                                   'Гость: ${state.guestName}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium,
                                                 ),
                                               if (state.guestEmail != null &&
                                                   state.guestEmail!.isNotEmpty)
                                                 Text(
                                                   'Email: ${state.guestEmail}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodyMedium,
                                                 ),
                                             ],
                                           ),
@@ -223,9 +223,9 @@ class RoomDetailsPage extends StatelessWidget {
                                             children: <Widget>[
                                               Text(
                                                 l10n.conflictingBookingsTitle,
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium,
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodyMedium,
                                               ),
                                               const SizedBox(height: 4),
                                               for (final Booking b
@@ -233,9 +233,9 @@ class RoomDetailsPage extends StatelessWidget {
                                                 Text(
                                                   '- ${DateFormat.yMMMd().format(b.startDate.toLocal())} — '
                                                   '${DateFormat.yMMMd().format(b.endDate.toLocal())}',
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodySmall,
                                                 ),
                                             ],
                                           ),
@@ -404,47 +404,41 @@ class RoomDetailsPage extends StatelessWidget {
                                                             final bool?
                                                             confirm = await showDialog<bool>(
                                                               context: context,
-                                                              builder: (BuildContext context) => AlertDialog(
-                                                                title:
-                                                                    const Text(
+                                                              builder:
+                                                                  (
+                                                                    BuildContext
+                                                                    context,
+                                                                  ) => AlertDialog(
+                                                                    title: const Text(
                                                                       'Отменить бронь?',
                                                                     ),
-                                                                content:
-                                                                    const Text(
-                                                                      'Вы уверены, что хотите отменить эту бронь?',
-                                                                    ),
-                                                                actions: <Widget>[
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.of(
-                                                                          context,
-                                                                        ).pop(
-                                                                          false,
-                                                                        ),
-                                                                    child:
+                                                                    content:
                                                                         const Text(
+                                                                          'Вы уверены, что хотите отменить эту бронь?',
+                                                                        ),
+                                                                    actions: <Widget>[
+                                                                      TextButton(
+                                                                        onPressed: () => Navigator.of(
+                                                                          context,
+                                                                        ).pop(false),
+                                                                        child: const Text(
                                                                           'Нет',
                                                                         ),
-                                                                  ),
-                                                                  TextButton(
-                                                                    onPressed: () =>
-                                                                        Navigator.of(
+                                                                      ),
+                                                                      TextButton(
+                                                                        onPressed: () => Navigator.of(
                                                                           context,
-                                                                        ).pop(
-                                                                          true,
+                                                                        ).pop(true),
+                                                                        style: TextButton.styleFrom(
+                                                                          foregroundColor:
+                                                                              Colors.red,
                                                                         ),
-                                                                    style: TextButton.styleFrom(
-                                                                      foregroundColor:
-                                                                          Colors
-                                                                              .red,
-                                                                    ),
-                                                                    child:
-                                                                        const Text(
+                                                                        child: const Text(
                                                                           'Да, отменить',
                                                                         ),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
-                                                              ),
                                                             );
                                                             if (confirm ==
                                                                     true &&
@@ -598,8 +592,9 @@ class _RoomHero extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   room.type,
-                  style: Theme.of(context).textTheme.bodyMedium
-                      ?.copyWith(color: Colors.white70),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
                 ),
                 const SizedBox(height: 8),
                 Container(
