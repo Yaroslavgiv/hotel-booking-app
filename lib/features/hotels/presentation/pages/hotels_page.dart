@@ -19,9 +19,6 @@ class HotelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AuthState authState = context.watch<AuthBloc>().state;
-    final User? user = authState is AuthAuthenticated ? authState.user : null;
-
     final l10n = AppLocalizations.of(context);
     final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
     final GetRoomsByHotelUseCase getRoomsByHotel = context
@@ -132,6 +129,9 @@ class _HotelsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthState authState = context.watch<AuthBloc>().state;
+    final User? user = authState is AuthAuthenticated ? authState.user : null;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
