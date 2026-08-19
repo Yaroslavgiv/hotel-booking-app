@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
 
 enum WindowsOverviewStatus { initial, loading, success, failure }
 
@@ -44,4 +44,3 @@ class WindowsOverviewState extends Equatable {
   @override
   List<Object?> get props => [status, items, errorMessage];
 }
-

@@ -1,10 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_hotels_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/domain/value_objects/availability_info.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/value_objects/availability_info.dart';
 
 import 'windows_overview_event.dart';
 import 'windows_overview_state.dart';
@@ -33,10 +34,14 @@ class WindowsOverviewBloc
       final List<Hotel> picked = hotels.take(2).toList();
 
       final DateTime now = DateTime.now();
-      final DateTime todayStart =
-          DateTime(now.year, now.month, now.day); // 00:00
-      final DateTime todayEnd =
-          todayStart.add(const Duration(days: 1)); // +1 день
+      final DateTime todayStart = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ); // 00:00
+      final DateTime todayEnd = todayStart.add(
+        const Duration(days: 1),
+      ); // +1 день
 
       final List<HotelTodayStatus> statuses = <HotelTodayStatus>[];
 
@@ -45,8 +50,7 @@ class WindowsOverviewBloc
         DateTime? nextAvailableDate;
 
         try {
-          final List<Room> rooms =
-              await _getRoomsByHotel(hotel.id);
+          final List<Room> rooms = await _getRoomsByHotel(hotel.id);
 
           // Если нет номеров, помечаем как занято
           if (rooms.isEmpty) {
@@ -62,8 +66,7 @@ class WindowsOverviewBloc
 
           // Проверяем доступность на сегодня - проверяем только первый номер для скорости
           try {
-            final AvailabilityInfo info =
-                await _checkAvailability(
+            final AvailabilityInfo info = await _checkAvailability(
               CheckAvailabilityParams(
                 roomId: rooms.first.id,
                 start: todayStart,
@@ -80,12 +83,15 @@ class WindowsOverviewBloc
           if (!hasFree) {
             try {
               for (int dayOffset = 1; dayOffset <= 30; dayOffset++) {
-                final DateTime checkDate = todayStart.add(Duration(days: dayOffset));
-                final DateTime checkDateEnd = checkDate.add(const Duration(days: 1));
+                final DateTime checkDate = todayStart.add(
+                  Duration(days: dayOffset),
+                );
+                final DateTime checkDateEnd = checkDate.add(
+                  const Duration(days: 1),
+                );
 
                 try {
-                  final AvailabilityInfo info =
-                      await _checkAvailability(
+                  final AvailabilityInfo info = await _checkAvailability(
                     CheckAvailabilityParams(
                       roomId: rooms.first.id,
                       start: checkDate,
@@ -131,10 +137,9 @@ class WindowsOverviewBloc
       emit(
         state.copyWith(
           status: WindowsOverviewStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failureMessage(e),
         ),
       );
     }
   }
 }
-

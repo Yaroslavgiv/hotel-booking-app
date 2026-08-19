@@ -1,23 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mobapp/features/auth/domain/entities/user.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_state.dart';
-import 'package:mobapp/features/hotels/application/cancel_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/create_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_room_details_use_case.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/domain/repositories/hotel_repository.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/room_details/room_details_bloc.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/room_details/room_details_event.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/room_details/room_details_state.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/auth/application/auth_use_cases.dart';
+import 'package:hotel_booking_app/features/auth/domain/entities/user.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_room_details_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repository.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/room_details/room_details_state.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockHotelRepository extends Mock implements HotelRepository {}
+
+class MockLoginUseCase extends Mock implements LoginUseCase {}
+
+class MockRegisterUseCase extends Mock implements RegisterUseCase {}
+
+class MockRestoreSessionUseCase extends Mock implements RestoreSessionUseCase {}
+
+class MockLogoutUseCase extends Mock implements LogoutUseCase {}
 
 class TestRoomDetailsBloc extends RoomDetailsBloc {
   TestRoomDetailsBloc(RoomDetailsState initialState)
@@ -135,8 +144,8 @@ class TestableRoomDetailsPage extends StatelessWidget {
                                             vertical: 6,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: Colors.white.withOpacity(
-                                              0.18,
+                                            color: Colors.white.withValues(
+                                              alpha: 0.18,
                                             ),
                                             borderRadius: BorderRadius.circular(
                                               20,
@@ -469,7 +478,12 @@ void main() {
     late AuthBloc authBloc;
 
     setUp(() {
-      authBloc = AuthBloc();
+      authBloc = AuthBloc(
+        MockLoginUseCase(),
+        MockRegisterUseCase(),
+        MockRestoreSessionUseCase(),
+        MockLogoutUseCase(),
+      );
     });
 
     tearDown(() {
@@ -563,7 +577,12 @@ void main() {
         price: 2500.0,
       );
 
-      final user = const User(name: 'Иван Иванов', email: 'ivan@test.com');
+      final user = const User(
+        id: 'user-1',
+        name: 'Иван Иванов',
+        email: 'ivan@test.com',
+        role: 'USER',
+      );
 
       await tester.pumpWidget(
         createTestWidget(

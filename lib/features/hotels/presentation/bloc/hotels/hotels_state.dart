@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
 
 enum HotelsStatus { initial, loading, success, failure }
 
@@ -46,6 +46,10 @@ class HotelsState extends Equatable {
   }
 
   @override
-  List<Object?> get props => [status, hotels, errorMessage, availabilityStatuses];
+  List<Object?> get props => [
+    status,
+    hotels,
+    errorMessage,
+    availabilityStatuses,
+  ];
 }
-

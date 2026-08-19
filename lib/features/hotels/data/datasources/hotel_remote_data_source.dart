@@ -1,24 +1,17 @@
-import 'package:flutter/foundation.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:mobapp/core/config/app_config.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/domain/value_objects/availability_info.dart';
+import 'package:hotel_booking_app/core/network/graphql_api_client.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/value_objects/availability_info.dart';
 
 /// Реальный remote data source, работающий с GraphQL-схемой Backend.
 class HotelRemoteDataSource {
-  HotelRemoteDataSource()
-    : _client = ValueNotifier<GraphQLClient>(
-        GraphQLClient(
-          link: HttpLink(AppConfig.graphQLEndpoint),
-          cache: GraphQLCache(),
-        ),
-      );
+  HotelRemoteDataSource(this._apiClient);
 
-  final ValueNotifier<GraphQLClient> _client;
+  final GraphQLApiClient _apiClient;
 
-  GraphQLClient get client => _client.value;
+  GraphQLClient get client => _apiClient.client;
 
   /// -----------------
   /// GraphQL запросы
@@ -67,13 +60,25 @@ query CheckAvailability($roomId: ID!, $checkIn: String!, $checkOut: String!) {
     available
     conflictingBookings {
       id
-      guestName
-      guestEmail
       checkIn
       checkOut
       roomId
       isActive
     }
+  }
+}
+''';
+
+  static const String _myBookingsQuery = r'''
+query MyBookings {
+  myBookings {
+    id
+    guestName
+    guestEmail
+    checkIn
+    checkOut
+    roomId
+    isActive
   }
 }
 ''';
@@ -132,7 +137,7 @@ mutation CancelBooking($id: ID!) {
   }
 
   Booking _mapBooking(Map<String, dynamic> json) {
-    DateTime _parseDate(dynamic value) {
+    DateTime parseDate(dynamic value) {
       // Бэкенд может вернуть:
       // - ISO-строку даты,
       // - timestamp в миллисекундах (как число или строка).
@@ -162,8 +167,8 @@ mutation CancelBooking($id: ID!) {
     return Booking(
       id: json['id'] as String,
       roomId: json['roomId'] as String,
-      startDate: _parseDate(checkInRaw),
-      endDate: _parseDate(checkOutRaw),
+      startDate: parseDate(checkInRaw),
+      endDate: parseDate(checkOutRaw),
       isActive: json['isActive'] as bool,
       guestName: json['guestName'] as String?,
       guestEmail: json['guestEmail'] as String?,
@@ -230,22 +235,33 @@ mutation CancelBooking($id: ID!) {
     final List<dynamic> roomsJson =
         (result.data?['rooms'] as List<dynamic>? ?? <dynamic>[]);
 
-    final Map<String, dynamic>? roomJson = roomsJson
+    final Map<String, dynamic> roomJson = roomsJson
         .cast<Map<String, dynamic>>()
         .firstWhere((Map<String, dynamic> r) => r['id'] == roomId);
-
-    if (roomJson == null) {
-      throw Exception('Room not found');
-    }
 
     return _mapRoom(roomJson);
   }
 
-  /// В GraphQL-схеме нет отдельного запроса для "все брони номера",
-  /// поэтому на первом шаге просто возвращаем пустой список.
-  /// Фактические брони появятся в состоянии после createBooking/cancelBooking.
   Future<List<Booking>> fetchRoomBookings(String roomId) async {
-    return <Booking>[];
+    final QueryResult result = await client.query(
+      QueryOptions(
+        document: gql(_myBookingsQuery),
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+
+    if (result.hasException) {
+      throw result.exception!;
+    }
+
+    final List<dynamic> bookingsJson =
+        (result.data?['myBookings'] as List<dynamic>? ?? <dynamic>[]);
+
+    return bookingsJson
+        .cast<Map<String, dynamic>>()
+        .map(_mapBooking)
+        .where((Booking booking) => booking.roomId == roomId)
+        .toList(growable: false);
   }
 
   Future<AvailabilityInfo> checkAvailability({

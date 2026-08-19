@@ -1,5 +1,5 @@
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
-import 'package:mobapp/features/hotels/domain/repositories/hotel_repository.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repository.dart';
 
 class CreateBookingParams {
   const CreateBookingParams({
@@ -32,4 +32,3 @@ class CreateBookingUseCase {
     );
   }
 }
-

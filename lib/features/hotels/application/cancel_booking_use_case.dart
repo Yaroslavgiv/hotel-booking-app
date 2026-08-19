@@ -1,4 +1,4 @@
-import 'package:mobapp/features/hotels/domain/repositories/hotel_repository.dart';
+import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repository.dart';
 
 class CancelBookingUseCase {
   const CancelBookingUseCase(this._repository);
@@ -9,4 +9,3 @@ class CancelBookingUseCase {
     return _repository.cancelBooking(bookingId);
   }
 }
-

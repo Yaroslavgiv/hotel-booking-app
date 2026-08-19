@@ -20,7 +20,13 @@ class Booking extends Equatable {
   final String? guestEmail;
 
   @override
-  List<Object?> get props =>
-      [id, roomId, startDate, endDate, isActive, guestName, guestEmail];
+  List<Object?> get props => [
+    id,
+    roomId,
+    startDate,
+    endDate,
+    isActive,
+    guestName,
+    guestEmail,
+  ];
 }
-

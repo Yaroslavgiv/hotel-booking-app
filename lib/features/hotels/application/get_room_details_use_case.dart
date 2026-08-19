@@ -1,12 +1,9 @@
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/domain/repositories/hotel_repository.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repository.dart';
 
 class GetRoomDetailsResult {
-  const GetRoomDetailsResult({
-    required this.room,
-    required this.bookings,
-  });
+  const GetRoomDetailsResult({required this.room, required this.bookings});
 
   final Room room;
   final List<Booking> bookings;
@@ -23,4 +20,3 @@ class GetRoomDetailsUseCase {
     return GetRoomDetailsResult(room: room, bookings: bookings);
   }
 }
-

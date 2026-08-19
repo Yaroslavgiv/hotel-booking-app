@@ -10,4 +10,3 @@ abstract class WindowsOverviewEvent extends Equatable {
 class WindowsOverviewRefreshRequested extends WindowsOverviewEvent {
   const WindowsOverviewRefreshRequested();
 }
-

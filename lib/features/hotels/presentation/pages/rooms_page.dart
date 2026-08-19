@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
-import 'package:mobapp/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:mobapp/features/hotels/data/repositories/hotel_repository_impl.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/rooms/rooms_bloc.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/rooms/rooms_event.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/rooms/rooms_state.dart';
-import 'package:mobapp/features/hotels/presentation/pages/room_details_page.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/rooms/rooms_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/rooms/rooms_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/rooms/rooms_state.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/pages/room_details_page.dart';
 
 class RoomsPage extends StatelessWidget {
   const RoomsPage({required this.hotel, super.key});
@@ -19,72 +17,76 @@ class RoomsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final repository = HotelRepositoryImpl(HotelRemoteDataSource());
-    final getRoomsByHotel = GetRoomsByHotelUseCase(repository);
+    final l10n = AppLocalizations.of(context);
+    final GetRoomsByHotelUseCase getRoomsByHotel = context
+        .read<GetRoomsByHotelUseCase>();
 
     final Color primary = Theme.of(context).colorScheme.primary;
 
     return BlocProvider<RoomsBloc>(
-      create: (_) => RoomsBloc(getRoomsByHotel)
-        ..add(LoadRoomsRequested(hotel.id)),
+      create: (_) =>
+          RoomsBloc(getRoomsByHotel)..add(LoadRoomsRequested(hotel.id)),
       child: Scaffold(
         backgroundColor: const Color(0xFFF4F6FA),
         body: SafeArea(
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: 320,
-                  minHeight: 400,
-                ),
+                constraints: BoxConstraints(minWidth: 320, minHeight: 400),
                 child: Column(
                   children: <Widget>[
-              _RoomsHeader(hotel: hotel, primary: primary),
-              const _RoomsFilterBar(),
-              Expanded(
-                child: BlocBuilder<RoomsBloc, RoomsState>(
-                  builder: (BuildContext context, RoomsState state) {
-                    if (state.status == RoomsStatus.loading) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
+                    _RoomsHeader(hotel: hotel, primary: primary),
+                    const _RoomsFilterBar(),
+                    Expanded(
+                      child: BlocBuilder<RoomsBloc, RoomsState>(
+                        builder: (BuildContext context, RoomsState state) {
+                          if (state.status == RoomsStatus.loading) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
 
-                    if (state.status == RoomsStatus.failure) {
-                      return Center(
-                        child: Text(state.errorMessage ?? l10n.errorLoading),
-                      );
-                    }
-
-                    if (state.rooms.isEmpty) {
-                      return Center(child: Text(l10n.roomsEmpty));
-                    }
-
-                    return ListView.builder(
-                      padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
-                      itemCount: state.rooms.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final Room room = state.rooms[index];
-                        return _RoomCard(
-                          room: room,
-                          hotel: hotel,
-                          primary: primary,
-                          onTap: () {
-                            final authBloc = context.read<AuthBloc>();
-                            Navigator.of(context).push(
-                              MaterialPageRoute<Widget>(
-                                builder: (_) => BlocProvider<AuthBloc>.value(
-                                  value: authBloc,
-                                  child: RoomDetailsPage(roomId: room.id),
-                                ),
+                          if (state.status == RoomsStatus.failure) {
+                            return Center(
+                              child: Text(
+                                state.errorMessage ?? l10n.errorLoading,
                               ),
                             );
-                          },
-                        );
-                      },
-                    );
-                  },
-                ),
-              ),
+                          }
+
+                          if (state.rooms.isEmpty) {
+                            return Center(child: Text(l10n.roomsEmpty));
+                          }
+
+                          return ListView.builder(
+                            padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+                            itemCount: state.rooms.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final Room room = state.rooms[index];
+                              return _RoomCard(
+                                room: room,
+                                hotel: hotel,
+                                primary: primary,
+                                onTap: () {
+                                  final authBloc = context.read<AuthBloc>();
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<Widget>(
+                                      builder: (_) =>
+                                          BlocProvider<AuthBloc>.value(
+                                            value: authBloc,
+                                            child: RoomDetailsPage(
+                                              roomId: room.id,
+                                            ),
+                                          ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               );
@@ -97,10 +99,7 @@ class RoomsPage extends StatelessWidget {
 }
 
 class _RoomsHeader extends StatelessWidget {
-  const _RoomsHeader({
-    required this.hotel,
-    required this.primary,
-  });
+  const _RoomsHeader({required this.hotel, required this.primary});
 
   final Hotel hotel;
   final Color primary;
@@ -112,7 +111,7 @@ class _RoomsHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[primary, primary.withOpacity(0.85)],
+          colors: <Color>[primary, primary.withValues(alpha: 0.85)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -144,21 +143,18 @@ class _RoomsHeader extends StatelessWidget {
                     Text(
                       'Отель',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Colors.white.withOpacity(0.8),
-                          ),
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       hotel.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Row(
@@ -174,12 +170,8 @@ class _RoomsHeader extends StatelessWidget {
                             hotel.address,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color: Colors.white70,
-                                ),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: Colors.white70),
                           ),
                         ),
                       ],
@@ -192,13 +184,10 @@ class _RoomsHeader extends StatelessWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.18),
+                  color: Colors.white.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.king_bed_rounded,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.king_bed_rounded, color: Colors.white),
               ),
             ],
           ),
@@ -229,11 +218,15 @@ class _RoomCard extends StatelessWidget {
     if (name.contains('hartwell') || address.contains('hartwell')) {
       return 'assets/images/Hartwell.jpg';
     }
-    if (name.contains('москва') || address.contains('москва') || address.contains('moscow')) {
+    if (name.contains('москва') ||
+        address.contains('москва') ||
+        address.contains('moscow')) {
       return 'assets/images/moscow.jpg';
     }
-    if (name.contains('петербург') || name.contains('petersburg') || 
-        address.contains('петербург') || address.contains('petersburg') ||
+    if (name.contains('петербург') ||
+        name.contains('petersburg') ||
+        address.contains('петербург') ||
+        address.contains('petersburg') ||
         address.contains('piter')) {
       return 'assets/images/Saint-Petersburg.jpg';
     }
@@ -254,7 +247,7 @@ class _RoomCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -267,7 +260,7 @@ class _RoomCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(18),
                 ),
-                child: Container(
+                child: SizedBox(
                   height: 130,
                   child: Stack(
                     fit: StackFit.expand,
@@ -276,20 +269,25 @@ class _RoomCard extends StatelessWidget {
                       Image.asset(
                         _getHotelImagePath(),
                         fit: BoxFit.cover,
-                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: <Color>[
-                                  primary.withOpacity(0.95),
-                                  primary.withOpacity(0.7),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                          );
-                        },
+                        errorBuilder:
+                            (
+                              BuildContext context,
+                              Object error,
+                              StackTrace? stackTrace,
+                            ) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: <Color>[
+                                      primary.withValues(alpha: 0.95),
+                                      primary.withValues(alpha: 0.7),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
+                              );
+                            },
                       ),
                       // Затемнение для читаемости текста
                       Container(
@@ -299,7 +297,7 @@ class _RoomCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: <Color>[
                               Colors.transparent,
-                              Colors.black.withOpacity(0.6),
+                              Colors.black.withValues(alpha: 0.6),
                             ],
                           ),
                         ),
@@ -315,9 +313,7 @@ class _RoomCard extends StatelessWidget {
                               'Номер ${room.number}',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleMedium
+                              style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
@@ -328,12 +324,8 @@ class _RoomCard extends StatelessWidget {
                               room.type,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodySmall
-                                  ?.copyWith(
-                                    color: Colors.white70,
-                                  ),
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(color: Colors.white70),
                             ),
                           ],
                         ),
@@ -351,17 +343,13 @@ class _RoomCard extends StatelessWidget {
                       children: <Widget>[
                         Text(
                           '${room.price.toStringAsFixed(0)} ₽',
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleMedium
+                          style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 2),
                         Text(
                           'за ночь',
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodySmall
+                          style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: Colors.grey[600]),
                         ),
                       ],
@@ -414,20 +402,18 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
   }
 
   void _applyFilter(BuildContext context, RoomsState state) {
-    final double? minPrice =
-        double.tryParse(_minPriceController.text.trim());
-    final double? maxPrice =
-        double.tryParse(_maxPriceController.text.trim());
+    final double? minPrice = double.tryParse(_minPriceController.text.trim());
+    final double? maxPrice = double.tryParse(_maxPriceController.text.trim());
 
     context.read<RoomsBloc>().add(
-          RoomsFilterUpdated(
-            minPrice: minPrice,
-            maxPrice: maxPrice,
-            selectedType: _selectedType,
-            filterStart: state.filterStart,
-            filterEnd: state.filterEnd,
-          ),
-        );
+      RoomsFilterUpdated(
+        minPrice: minPrice,
+        maxPrice: maxPrice,
+        selectedType: _selectedType,
+        filterStart: state.filterStart,
+        filterEnd: state.filterEnd,
+      ),
+    );
   }
 
   Future<void> _pickDates(BuildContext context, RoomsState state) async {
@@ -437,22 +423,25 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
       firstDate: DateTime(now.year - 1),
       lastDate: DateTime(now.year + 2),
     );
+    if (!context.mounted) {
+      return;
+    }
     if (picked != null) {
       context.read<RoomsBloc>().add(
-            RoomsFilterUpdated(
-              minPrice: state.minPrice,
-              maxPrice: state.maxPrice,
-              selectedType: state.selectedType,
-              filterStart: picked.start,
-              filterEnd: picked.end,
-            ),
-          );
+        RoomsFilterUpdated(
+          minPrice: state.minPrice,
+          maxPrice: state.maxPrice,
+          selectedType: state.selectedType,
+          filterStart: picked.start,
+          filterEnd: picked.end,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     return BlocBuilder<RoomsBloc, RoomsState>(
       builder: (BuildContext context, RoomsState state) {
         final List<String> types = state.allRooms
@@ -506,7 +495,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
                               vertical: 12,
                             ),
                           ),
-                          value: _selectedType,
+                          initialValue: _selectedType,
                           items: <DropdownMenuItem<String>>[
                             DropdownMenuItem<String>(
                               value: null,
@@ -518,10 +507,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
                             ...types.map(
                               (String t) => DropdownMenuItem<String>(
                                 value: t,
-                                child: Text(
-                                  t,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                child: Text(t, overflow: TextOverflow.ellipsis),
                               ),
                             ),
                           ],
@@ -572,7 +558,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
                               vertical: 12,
                             ),
                           ),
-                          value: _selectedType,
+                          initialValue: _selectedType,
                           items: <DropdownMenuItem<String>>[
                             DropdownMenuItem<String>(
                               value: null,
@@ -584,10 +570,7 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
                             ...types.map(
                               (String t) => DropdownMenuItem<String>(
                                 value: t,
-                                child: Text(
-                                  t,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                child: Text(t, overflow: TextOverflow.ellipsis),
                               ),
                             ),
                           ],
@@ -629,4 +612,3 @@ class _RoomsFilterBarState extends State<_RoomsFilterBar> {
     );
   }
 }
-

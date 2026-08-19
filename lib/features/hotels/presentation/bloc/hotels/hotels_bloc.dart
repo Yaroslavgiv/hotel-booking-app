@@ -1,23 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_hotels_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
 
 import 'hotels_event.dart';
 import 'hotels_state.dart';
 
 class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
-  HotelsBloc(
-    this._getHotels,
-    this._getRoomsByHotel,
-    this._checkAvailability,
-  ) : super(const HotelsState()) {
+  HotelsBloc(this._getHotels, this._getRoomsByHotel, this._checkAvailability)
+    : super(const HotelsState()) {
     on<LoadHotelsRequested>(_onLoadHotelsRequested);
     on<CheckAvailabilityRequested>(_onCheckAvailabilityRequested);
-    on<RefreshAvailabilityStatusesRequested>(_onRefreshAvailabilityStatusesRequested);
+    on<RefreshAvailabilityStatusesRequested>(
+      _onRefreshAvailabilityStatusesRequested,
+    );
   }
 
   final GetHotelsUseCase _getHotels;
@@ -46,7 +46,7 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
       emit(
         state.copyWith(
           status: HotelsStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failureMessage(e),
         ),
       );
     }
@@ -60,7 +60,9 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
       final List<Room> rooms = await _getRoomsByHotel(event.hotelId);
       if (rooms.isEmpty) {
         final Map<String, HotelAvailabilityStatus> newStatuses =
-            Map<String, HotelAvailabilityStatus>.from(state.availabilityStatuses);
+            Map<String, HotelAvailabilityStatus>.from(
+              state.availabilityStatuses,
+            );
         newStatuses[event.hotelId] = HotelAvailabilityStatus(
           hotelId: event.hotelId,
           hasFreeRoomToday: false,
@@ -71,7 +73,9 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
       }
 
       // Отладочная информация
-      debugPrint('Checking availability for hotel ${event.hotelId}, rooms: ${rooms.length}');
+      debugPrint(
+        'Checking availability for hotel ${event.hotelId}, rooms: ${rooms.length}',
+      );
 
       final DateTime now = DateTime.now();
       final DateTime todayStart = DateTime(now.year, now.month, now.day);
@@ -104,8 +108,12 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
       if (!hasFree) {
         try {
           for (int dayOffset = 1; dayOffset <= 30; dayOffset++) {
-            final DateTime checkDate = todayStart.add(Duration(days: dayOffset));
-            final DateTime checkDateEnd = checkDate.add(const Duration(days: 1));
+            final DateTime checkDate = todayStart.add(
+              Duration(days: dayOffset),
+            );
+            final DateTime checkDateEnd = checkDate.add(
+              const Duration(days: 1),
+            );
 
             bool foundFree = false;
             // Проверяем все номера на эту дату
@@ -144,9 +152,11 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
         nextAvailableDate: nextAvailableDate,
       );
       emit(state.copyWith(availabilityStatuses: newStatuses));
-      
+
       // Отладочная информация
-      debugPrint('Hotel ${event.hotelId}: hasFree=$hasFree, nextDate=$nextAvailableDate');
+      debugPrint(
+        'Hotel ${event.hotelId}: hasFree=$hasFree, nextDate=$nextAvailableDate',
+      );
     } catch (e) {
       // Отладочная информация об ошибке
       debugPrint('Error checking availability for hotel ${event.hotelId}: $e');
@@ -170,14 +180,15 @@ class HotelsBloc extends Bloc<HotelsEvent, HotelsState> {
     if (state.hotels.isEmpty) {
       return;
     }
-    
+
     // Очищаем текущие статусы
-    emit(state.copyWith(availabilityStatuses: <String, HotelAvailabilityStatus>{}));
-    
+    emit(
+      state.copyWith(availabilityStatuses: <String, HotelAvailabilityStatus>{}),
+    );
+
     // Проверяем доступность для всех отелей
     for (final Hotel hotel in state.hotels) {
       add(CheckAvailabilityRequested(hotelId: hotel.id));
     }
   }
 }
-

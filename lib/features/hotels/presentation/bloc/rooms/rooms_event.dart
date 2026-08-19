@@ -32,7 +32,11 @@ class RoomsFilterUpdated extends RoomsEvent {
   final DateTime? filterEnd;
 
   @override
-  List<Object?> get props =>
-      [minPrice, maxPrice, selectedType, filterStart, filterEnd];
+  List<Object?> get props => [
+    minPrice,
+    maxPrice,
+    selectedType,
+    filterStart,
+    filterEnd,
+  ];
 }
-

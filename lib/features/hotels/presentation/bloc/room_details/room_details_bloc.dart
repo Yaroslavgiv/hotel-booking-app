@@ -1,10 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:mobapp/features/hotels/application/cancel_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/create_booking_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_room_details_use_case.dart';
-import 'package:mobapp/features/hotels/domain/entities/booking.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
+import 'package:hotel_booking_app/features/hotels/application/cancel_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/create_booking_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_room_details_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/booking.dart';
 
 import 'room_details_event.dart';
 import 'room_details_state.dart';
@@ -41,8 +41,11 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
       // чтобы сразу показать недоступные интервалы.
       // Используем завтрашний день для проверки, чтобы избежать проблем с часовыми поясами
       final DateTime now = DateTime.now();
-      final DateTime tomorrowStart = DateTime(now.year, now.month, now.day)
-          .add(const Duration(days: 1));
+      final DateTime tomorrowStart = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).add(const Duration(days: 1));
       final info = await _checkAvailability(
         CheckAvailabilityParams(
           roomId: event.roomId,
@@ -51,12 +54,11 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         ),
       );
 
-      // Объединяем брони из result.bookings и conflictingBookings
-      // conflictingBookings содержит все брони на выбранный период (год вперед)
+      // Объединяем собственные брони пользователя и обезличенные конфликты.
       final Set<String> bookingIds = <String>{};
       final List<Booking> allBookings = <Booking>[];
 
-      // Добавляем брони из result.bookings (обычно пустой, но на всякий случай)
+      // Собственные брони содержат данные, необходимые для управления ими.
       for (final Booking booking in result.bookings) {
         if (!bookingIds.contains(booking.id)) {
           bookingIds.add(booking.id);
@@ -64,7 +66,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         }
       }
 
-      // Добавляем брони из conflictingBookings (они содержат все брони на период)
+      // Конфликты используются только для отображения занятых интервалов.
       for (final Booking booking in info.conflictingBookings) {
         if (!bookingIds.contains(booking.id)) {
           bookingIds.add(booking.id);
@@ -93,7 +95,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
       emit(
         state.copyWith(
           status: RoomDetailsStatus.failure,
-          errorMessage: _mapErrorToMessage(e),
+          errorMessage: failureMessage(e),
         ),
       );
     }
@@ -202,7 +204,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(errorMessage: _mapErrorToMessage(e)));
+      emit(state.copyWith(errorMessage: failureMessage(e)));
     }
   }
 
@@ -255,7 +257,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         ),
       );
     } catch (e) {
-      emit(state.copyWith(errorMessage: _mapErrorToMessage(e)));
+      emit(state.copyWith(errorMessage: failureMessage(e)));
     }
   }
 
@@ -265,15 +267,4 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
   ) {
     emit(state.copyWith(guestName: event.name, guestEmail: event.email));
   }
-}
-
-String _mapErrorToMessage(Object error) {
-  if (error is OperationException && error.graphqlErrors.isNotEmpty) {
-    // Берём только человеко-понятное сообщение из GraphQL,
-    // без трассировки и прочего шума.
-    return error.graphqlErrors.first.message;
-  }
-
-  // Фолбэк на случай других ошибок сети/клиента.
-  return 'Произошла ошибка при обработке запроса. Попробуйте ещё раз.';
 }

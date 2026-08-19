@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/core/errors/failure_message.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
 
 import 'rooms_event.dart';
 import 'rooms_state.dart';
@@ -37,7 +38,7 @@ class RoomsBloc extends Bloc<RoomsEvent, RoomsState> {
       emit(
         state.copyWith(
           status: RoomsStatus.failure,
-          errorMessage: e.toString(),
+          errorMessage: failureMessage(e),
         ),
       );
     }
@@ -77,4 +78,3 @@ class RoomsBloc extends Bloc<RoomsEvent, RoomsState> {
     );
   }
 }
-

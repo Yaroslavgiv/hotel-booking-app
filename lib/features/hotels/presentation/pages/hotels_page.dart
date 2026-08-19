@@ -1,31 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobapp/features/hotels/application/check_availability_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_hotels_use_case.dart';
-import 'package:mobapp/features/hotels/application/get_rooms_by_hotel_use_case.dart';
-import 'package:mobapp/features/hotels/data/datasources/hotel_remote_data_source.dart';
-import 'package:mobapp/features/hotels/data/repositories/hotel_repository_impl.dart';
-import 'package:mobapp/features/hotels/domain/entities/hotel.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/hotels/hotels_bloc.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/hotels/hotels_event.dart';
-import 'package:mobapp/features/hotels/presentation/bloc/hotels/hotels_state.dart';
-import 'package:mobapp/features/hotels/presentation/pages/rooms_page.dart';
-import 'package:mobapp/l10n/app_localizations.dart';
+import 'package:hotel_booking_app/features/auth/domain/entities/user.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_event.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_state.dart';
+import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/hotel.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_bloc.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_event.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/bloc/hotels/hotels_state.dart';
+import 'package:hotel_booking_app/features/hotels/presentation/pages/rooms_page.dart';
+import 'package:hotel_booking_app/l10n/app_localizations.dart';
 
 class HotelsPage extends StatelessWidget {
   const HotelsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final repository = HotelRepositoryImpl(HotelRemoteDataSource());
-    final GetHotelsUseCase getHotels = GetHotelsUseCase(repository);
-    final GetRoomsByHotelUseCase getRoomsByHotel = GetRoomsByHotelUseCase(
-      repository,
-    );
-    final CheckAvailabilityUseCase checkAvailability = CheckAvailabilityUseCase(
-      repository,
-    );
+    final l10n = AppLocalizations.of(context);
+    final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
+    final GetRoomsByHotelUseCase getRoomsByHotel = context
+        .read<GetRoomsByHotelUseCase>();
+    final CheckAvailabilityUseCase checkAvailability = context
+        .read<CheckAvailabilityUseCase>();
 
     final Color primary = Theme.of(context).colorScheme.primary;
     final Color onPrimary = Theme.of(context).colorScheme.onPrimary;
@@ -40,79 +39,78 @@ class HotelsPage extends StatelessWidget {
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return ConstrainedBox(
-                constraints: BoxConstraints(
-                  minWidth: 320,
-                  minHeight: 400,
-                ),
+                constraints: BoxConstraints(minWidth: 320, minHeight: 400),
                 child: BlocBuilder<HotelsBloc, HotelsState>(
-            builder: (BuildContext context, HotelsState state) {
-              if (state.status == HotelsStatus.loading) {
-                return const Center(child: CircularProgressIndicator());
-              }
+                  builder: (BuildContext context, HotelsState state) {
+                    if (state.status == HotelsStatus.loading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
 
-              if (state.status == HotelsStatus.failure) {
-                return _HotelsError(
-                  message: state.errorMessage ?? l10n.errorLoading,
-                );
-              }
+                    if (state.status == HotelsStatus.failure) {
+                      return _HotelsError(
+                        message: state.errorMessage ?? l10n.errorLoading,
+                      );
+                    }
 
-              if (state.status == HotelsStatus.success &&
-                  state.hotels.isEmpty) {
-                return _HotelsError(message: l10n.hotelsEmpty);
-              }
+                    if (state.status == HotelsStatus.success &&
+                        state.hotels.isEmpty) {
+                      return _HotelsError(message: l10n.hotelsEmpty);
+                    }
 
-              final List<Hotel> hotels = state.hotels;
+                    final List<Hotel> hotels = state.hotels;
 
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  _HotelsHeader(primary: primary, onPrimary: onPrimary),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 12,
-                    ),
-                    child: Text(
-                      l10n.hotelsTitle,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: ListView.builder(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 4,
-                      ),
-                      itemCount: hotels.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        final Hotel hotel = hotels[index];
-                        final HotelAvailabilityStatus? availabilityStatus =
-                            state.availabilityStatuses[hotel.id];
-                        return _HotelCard(
-                          hotel: hotel,
-                          primary: primary,
-                          availabilityStatus: availabilityStatus,
-                          onRefreshStatus: () {
-                            context
-                                .read<HotelsBloc>()
-                                .add(CheckAvailabilityRequested(hotelId: hotel.id));
-                          },
-                          onTap: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute<Widget>(
-                                builder: (_) => RoomsPage(hotel: hotel),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              );
-            },
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        _HotelsHeader(primary: primary, onPrimary: onPrimary),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 12,
+                          ),
+                          child: Text(
+                            l10n.hotelsTitle,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
+                            itemCount: hotels.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              final Hotel hotel = hotels[index];
+                              final HotelAvailabilityStatus?
+                              availabilityStatus =
+                                  state.availabilityStatuses[hotel.id];
+                              return _HotelCard(
+                                hotel: hotel,
+                                primary: primary,
+                                availabilityStatus: availabilityStatus,
+                                onRefreshStatus: () {
+                                  context.read<HotelsBloc>().add(
+                                    CheckAvailabilityRequested(
+                                      hotelId: hotel.id,
+                                    ),
+                                  );
+                                },
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute<Widget>(
+                                      builder: (_) => RoomsPage(hotel: hotel),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               );
             },
@@ -131,11 +129,14 @@ class _HotelsHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthState authState = context.watch<AuthBloc>().state;
+    final User? user = authState is AuthAuthenticated ? authState.user : null;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: <Color>[primary, primary.withOpacity(0.8)],
+          colors: <Color>[primary, primary.withValues(alpha: 0.8)],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
@@ -155,9 +156,9 @@ class _HotelsHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      AppLocalizations.of(context)!.appTitle,
+                      AppLocalizations.of(context).appTitle,
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: onPrimary.withOpacity(0.8),
+                        color: onPrimary.withValues(alpha: 0.8),
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -172,25 +173,24 @@ class _HotelsHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              CircleAvatar(
-                backgroundColor: onPrimary.withOpacity(0.15),
-                child: Icon(
-                  Icons.location_on_outlined,
-                  color: onPrimary,
-                ),
+              _AccountMenu(
+                user: user,
+                foregroundColor: onPrimary,
+                onLogout: () =>
+                    context.read<AuthBloc>().add(const AuthLoggedOut()),
               ),
             ],
           ),
           const SizedBox(height: 20),
           Container(
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.15),
+              color: Colors.white.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(16),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               children: <Widget>[
-                Icon(Icons.search, color: onPrimary.withOpacity(0.9)),
+                Icon(Icons.search, color: onPrimary.withValues(alpha: 0.9)),
                 const SizedBox(width: 8),
                 Expanded(
                   child: TextField(
@@ -198,7 +198,9 @@ class _HotelsHeader extends StatelessWidget {
                     decoration: InputDecoration(
                       border: InputBorder.none,
                       hintText: 'Поиск отеля, города...',
-                      hintStyle: TextStyle(color: onPrimary.withOpacity(0.7)),
+                      hintStyle: TextStyle(
+                        color: onPrimary.withValues(alpha: 0.7),
+                      ),
                     ),
                   ),
                 ),
@@ -207,6 +209,60 @@ class _HotelsHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AccountMenu extends StatelessWidget {
+  const _AccountMenu({
+    required this.user,
+    required this.foregroundColor,
+    required this.onLogout,
+  });
+
+  final User? user;
+  final Color foregroundColor;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    final String displayName = user?.name.trim() ?? '';
+    final String initial = displayName.isEmpty
+        ? '?'
+        : displayName.substring(0, 1);
+
+    return PopupMenuButton<String>(
+      tooltip: 'Профиль',
+      onSelected: (String value) {
+        if (value == 'logout') {
+          onLogout();
+        }
+      },
+      icon: CircleAvatar(
+        backgroundColor: foregroundColor.withValues(alpha: 0.15),
+        foregroundColor: foregroundColor,
+        child: Text(initial.toUpperCase()),
+      ),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          enabled: false,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.account_circle_outlined),
+            title: Text(user?.name ?? 'Пользователь'),
+            subtitle: Text(user?.email ?? ''),
+          ),
+        ),
+        const PopupMenuDivider(),
+        const PopupMenuItem<String>(
+          value: 'logout',
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.logout),
+            title: Text('Выйти'),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -234,11 +290,15 @@ class _HotelCard extends StatelessWidget {
     if (name.contains('hartwell') || address.contains('hartwell')) {
       return 'assets/images/Hartwell.jpg';
     }
-    if (name.contains('москва') || address.contains('москва') || address.contains('moscow')) {
+    if (name.contains('москва') ||
+        address.contains('москва') ||
+        address.contains('moscow')) {
       return 'assets/images/moscow.jpg';
     }
-    if (name.contains('петербург') || name.contains('petersburg') || 
-        address.contains('петербург') || address.contains('petersburg') ||
+    if (name.contains('петербург') ||
+        name.contains('petersburg') ||
+        address.contains('петербург') ||
+        address.contains('petersburg') ||
         address.contains('piter')) {
       return 'assets/images/Saint-Petersburg.jpg';
     }
@@ -259,7 +319,7 @@ class _HotelCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             boxShadow: <BoxShadow>[
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 12,
                 offset: const Offset(0, 6),
               ),
@@ -272,7 +332,7 @@ class _HotelCard extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(20),
                 ),
-                child: Container(
+                child: SizedBox(
                   height: 160,
                   child: Stack(
                     fit: StackFit.expand,
@@ -281,20 +341,25 @@ class _HotelCard extends StatelessWidget {
                       Image.asset(
                         _getHotelImagePath(),
                         fit: BoxFit.cover,
-                        errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: <Color>[
-                                  primary.withOpacity(0.95),
-                                  primary.withOpacity(0.75),
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                            ),
-                          );
-                        },
+                        errorBuilder:
+                            (
+                              BuildContext context,
+                              Object error,
+                              StackTrace? stackTrace,
+                            ) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: <Color>[
+                                      primary.withValues(alpha: 0.95),
+                                      primary.withValues(alpha: 0.75),
+                                    ],
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                  ),
+                                ),
+                              );
+                            },
                       ),
                       // Затемнение для читаемости текста
                       Container(
@@ -304,7 +369,7 @@ class _HotelCard extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: <Color>[
                               Colors.transparent,
-                              Colors.black.withOpacity(0.6),
+                              Colors.black.withValues(alpha: 0.6),
                             ],
                           ),
                         ),
@@ -360,7 +425,10 @@ class _HotelCard extends StatelessWidget {
                   children: <Widget>[
                     Expanded(
                       child: availabilityStatus != null
-                          ? _buildAvailabilityStatus(context, availabilityStatus!)
+                          ? _buildAvailabilityStatus(
+                              context,
+                              availabilityStatus!,
+                            )
                           : _buildLoadingStatus(context),
                     ),
                     if (onRefreshStatus != null) ...<Widget>[
@@ -374,7 +442,7 @@ class _HotelCard extends StatelessWidget {
                           minHeight: 36,
                         ),
                         onPressed: onRefreshStatus,
-                        tooltip: AppLocalizations.of(context)!.buttonRefresh,
+                        tooltip: AppLocalizations.of(context).buttonRefresh,
                       ),
                     ],
                   ],
@@ -390,7 +458,7 @@ class _HotelCard extends StatelessWidget {
                         vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: primary.withOpacity(0.08),
+                        color: primary.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
@@ -425,7 +493,7 @@ class _HotelCard extends StatelessWidget {
     BuildContext context,
     HotelAvailabilityStatus status,
   ) {
-    final l10n = AppLocalizations.of(context)!;
+    final l10n = AppLocalizations.of(context);
     final bool free = status.hasFreeRoomToday;
 
     String statusText;

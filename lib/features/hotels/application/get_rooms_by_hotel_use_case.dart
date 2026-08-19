@@ -1,5 +1,5 @@
-import 'package:mobapp/features/hotels/domain/entities/room.dart';
-import 'package:mobapp/features/hotels/domain/repositories/hotel_repository.dart';
+import 'package:hotel_booking_app/features/hotels/domain/entities/room.dart';
+import 'package:hotel_booking_app/features/hotels/domain/repositories/hotel_repository.dart';
 
 class GetRoomsByHotelUseCase {
   const GetRoomsByHotelUseCase(this._repository);
@@ -10,4 +10,3 @@ class GetRoomsByHotelUseCase {
     return _repository.getRooms(hotelId);
   }
 }
-
