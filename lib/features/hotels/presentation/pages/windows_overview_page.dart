@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:hotel_booking_app/l10n/app_localizations.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
@@ -40,6 +42,12 @@ class WindowsOverviewPage extends StatelessWidget {
                   },
                   tooltip: l10n.buttonRefresh,
                 ),
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () =>
+                      context.read<AuthBloc>().add(const AuthLoggedOut()),
+                  tooltip: 'Выйти',
+                ),
               ],
             ),
             body: BlocBuilder<WindowsOverviewBloc, WindowsOverviewState>(
@@ -57,16 +65,6 @@ class WindowsOverviewPage extends StatelessWidget {
                 if (state.status == WindowsOverviewStatus.success) {
                   if (state.items.isEmpty) {
                     return Center(child: Text(l10n.windowsOverviewEmpty));
-                  }
-
-                  // Отладочная информация
-                  debugPrint(
-                    'WindowsOverview: Success, items count: ${state.items.length}',
-                  );
-                  for (final item in state.items) {
-                    debugPrint(
-                      '  - ${item.hotel.name}: free=${item.hasFreeRoomToday}, nextDate=${item.nextAvailableDate}',
-                    );
                   }
 
                   return ListView.builder(
@@ -99,10 +97,6 @@ class WindowsOverviewPage extends StatelessWidget {
                       } else {
                         statusText = l10n.statusBusyToday;
                       }
-
-                      debugPrint(
-                        'Building card for ${hotel.name}: statusText=$statusText',
-                      );
 
                       return ConstrainedBox(
                         constraints: const BoxConstraints(

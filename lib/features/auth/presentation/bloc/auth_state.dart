@@ -15,6 +15,10 @@ final class AuthLoading extends AuthState {
   const AuthLoading();
 }
 
+final class AuthSessionLoading extends AuthState {
+  const AuthSessionLoading();
+}
+
 final class AuthAuthenticated extends AuthState {
   const AuthAuthenticated(this.user);
   final User user;

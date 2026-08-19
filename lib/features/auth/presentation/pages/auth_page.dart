@@ -1,11 +1,8 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_event.dart';
 import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_state.dart';
-import 'package:hotel_booking_app/features/hotels/presentation/pages/hotels_page.dart';
-import 'package:hotel_booking_app/features/hotels/presentation/pages/windows_overview_page.dart';
 import 'package:hotel_booking_app/l10n/app_localizations.dart';
 
 class AuthPage extends StatefulWidget {
@@ -45,26 +42,12 @@ class _AuthPageState extends State<AuthPage> {
     }
   }
 
-  void _openApplication() {
-    final Widget destination = defaultTargetPlatform == TargetPlatform.windows
-        ? const WindowsOverviewPage()
-        : const HotelsPage();
-    Navigator.of(
-      context,
-    ).pushReplacement(MaterialPageRoute<Widget>(builder: (_) => destination));
-  }
-
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final Color primary = Theme.of(context).colorScheme.primary;
 
-    return BlocConsumer<AuthBloc, AuthState>(
-      listener: (BuildContext context, AuthState state) {
-        if (state is AuthAuthenticated) {
-          _openApplication();
-        }
-      },
+    return BlocBuilder<AuthBloc, AuthState>(
       builder: (BuildContext context, AuthState state) {
         final bool loading = state is AuthLoading;
         return Scaffold(

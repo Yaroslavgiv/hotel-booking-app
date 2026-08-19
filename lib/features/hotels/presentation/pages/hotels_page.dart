@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hotel_booking_app/features/auth/domain/entities/user.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_event.dart';
+import 'package:hotel_booking_app/features/auth/presentation/bloc/auth_state.dart';
 import 'package:hotel_booking_app/features/hotels/application/check_availability_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_hotels_use_case.dart';
 import 'package:hotel_booking_app/features/hotels/application/get_rooms_by_hotel_use_case.dart';
@@ -15,6 +19,9 @@ class HotelsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthState authState = context.watch<AuthBloc>().state;
+    final User? user = authState is AuthAuthenticated ? authState.user : null;
+
     final l10n = AppLocalizations.of(context);
     final GetHotelsUseCase getHotels = context.read<GetHotelsUseCase>();
     final GetRoomsByHotelUseCase getRoomsByHotel = context
@@ -166,9 +173,11 @@ class _HotelsHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12),
-              CircleAvatar(
-                backgroundColor: onPrimary.withValues(alpha: 0.15),
-                child: Icon(Icons.location_on_outlined, color: onPrimary),
+              _AccountMenu(
+                user: user,
+                foregroundColor: onPrimary,
+                onLogout: () =>
+                    context.read<AuthBloc>().add(const AuthLoggedOut()),
               ),
             ],
           ),
@@ -200,6 +209,60 @@ class _HotelsHeader extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _AccountMenu extends StatelessWidget {
+  const _AccountMenu({
+    required this.user,
+    required this.foregroundColor,
+    required this.onLogout,
+  });
+
+  final User? user;
+  final Color foregroundColor;
+  final VoidCallback onLogout;
+
+  @override
+  Widget build(BuildContext context) {
+    final String displayName = user?.name.trim() ?? '';
+    final String initial = displayName.isEmpty
+        ? '?'
+        : displayName.substring(0, 1);
+
+    return PopupMenuButton<String>(
+      tooltip: 'Профиль',
+      onSelected: (String value) {
+        if (value == 'logout') {
+          onLogout();
+        }
+      },
+      icon: CircleAvatar(
+        backgroundColor: foregroundColor.withValues(alpha: 0.15),
+        foregroundColor: foregroundColor,
+        child: Text(initial.toUpperCase()),
+      ),
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        PopupMenuItem<String>(
+          enabled: false,
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.account_circle_outlined),
+            title: Text(user?.name ?? 'Пользователь'),
+            subtitle: Text(user?.email ?? ''),
+          ),
+        ),
+        const PopupMenuDivider(),
+        const PopupMenuItem<String>(
+          value: 'logout',
+          child: ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: Icon(Icons.logout),
+            title: Text('Выйти'),
+          ),
+        ),
+      ],
     );
   }
 }
