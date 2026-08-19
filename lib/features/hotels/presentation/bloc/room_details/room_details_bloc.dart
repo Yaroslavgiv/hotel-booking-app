@@ -54,12 +54,11 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         ),
       );
 
-      // Объединяем брони из result.bookings и conflictingBookings
-      // conflictingBookings содержит все брони на выбранный период (год вперед)
+      // Объединяем собственные брони пользователя и обезличенные конфликты.
       final Set<String> bookingIds = <String>{};
       final List<Booking> allBookings = <Booking>[];
 
-      // Добавляем брони из result.bookings (обычно пустой, но на всякий случай)
+      // Собственные брони содержат данные, необходимые для управления ими.
       for (final Booking booking in result.bookings) {
         if (!bookingIds.contains(booking.id)) {
           bookingIds.add(booking.id);
@@ -67,7 +66,7 @@ class RoomDetailsBloc extends Bloc<RoomDetailsEvent, RoomDetailsState> {
         }
       }
 
-      // Добавляем брони из conflictingBookings (они содержат все брони на период)
+      // Конфликты используются только для отображения занятых интервалов.
       for (final Booking booking in info.conflictingBookings) {
         if (!bookingIds.contains(booking.id)) {
           bookingIds.add(booking.id);

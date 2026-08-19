@@ -69,6 +69,20 @@ query CheckAvailability($roomId: ID!, $checkIn: String!, $checkOut: String!) {
 }
 ''';
 
+  static const String _myBookingsQuery = r'''
+query MyBookings {
+  myBookings {
+    id
+    guestName
+    guestEmail
+    checkIn
+    checkOut
+    roomId
+    isActive
+  }
+}
+''';
+
   static const String _createBookingMutation = r'''
 mutation CreateBooking($input: CreateBookingInput!) {
   createBooking(input: $input) {
@@ -228,11 +242,26 @@ mutation CancelBooking($id: ID!) {
     return _mapRoom(roomJson);
   }
 
-  /// В GraphQL-схеме нет отдельного запроса для "все брони номера",
-  /// поэтому на первом шаге просто возвращаем пустой список.
-  /// Фактические брони появятся в состоянии после createBooking/cancelBooking.
   Future<List<Booking>> fetchRoomBookings(String roomId) async {
-    return <Booking>[];
+    final QueryResult result = await client.query(
+      QueryOptions(
+        document: gql(_myBookingsQuery),
+        fetchPolicy: FetchPolicy.networkOnly,
+      ),
+    );
+
+    if (result.hasException) {
+      throw result.exception!;
+    }
+
+    final List<dynamic> bookingsJson =
+        (result.data?['myBookings'] as List<dynamic>? ?? <dynamic>[]);
+
+    return bookingsJson
+        .cast<Map<String, dynamic>>()
+        .map(_mapBooking)
+        .where((Booking booking) => booking.roomId == roomId)
+        .toList(growable: false);
   }
 
   Future<AvailabilityInfo> checkAvailability({
